@@ -113,6 +113,8 @@ struct ShareView: View {
 }
 
 private extension NSItemProvider {
+    /// No main actor: NSItemProvider não é Sendable. Só o Data volta pela continuation.
+    @MainActor
     func data(for type: UTType) async throws -> Data {
         try await withCheckedThrowingContinuation { cont in
             _ = loadDataRepresentation(forTypeIdentifier: type.identifier) { data, error in
