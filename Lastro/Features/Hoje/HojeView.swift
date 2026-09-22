@@ -56,23 +56,28 @@ struct HojeView: View {
                             .font(.system(size: 17, weight: .medium))
                             .foregroundStyle(.ink)
                             .glassCircle()
-                            .overlay(alignment: .topTrailing) {
-                                if model.receiptsCount > 0 {
-                                    Text("\(model.receiptsCount)")
-                                        .textStyle(11, .bold)
-                                        .foregroundStyle(.white)
-                                        .frame(minWidth: 18, minHeight: 18)
-                                        .padding(.horizontal, 3)
-                                        .background(.negative, in: .capsule)
-                                        .overlay { Capsule().strokeBorder(.canvas, lineWidth: 2) }
-                                        .offset(x: 3, y: -3)
-                                }
-                            }
                     }
                     .accessibilityLabel("Recibos, \(model.receiptsCount) esperando")
                 }
             }
             .buttonStyle(.plain)
+            // O badge fica fora do GlassEffectContainer: dentro dele o vidro o recorta.
+            .overlay(alignment: .topTrailing) {
+                if model.receiptsCount > 0 {
+                    Text("\(model.receiptsCount)")
+                        .textStyle(11, .bold)
+                        .monospacedDigit()
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 5)
+                        .frame(minWidth: 18, minHeight: 18)
+                        .background(Capsule().fill(Color.negative))
+                        .overlay { Capsule().strokeBorder(Color.canvas, lineWidth: 2) }
+                        .fixedSize()
+                        .offset(x: 3, y: -3)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+            }
         }
         .padding(.horizontal, 4)
         .padding(.top, 8)
@@ -293,7 +298,7 @@ struct FlowLegend: View {
     let segments: [HomeModel.Segment]
 
     var body: some View {
-        HStack(spacing: 14) {
+        FlowLayout(spacing: 14, lineSpacing: 6) {
             ForEach(segments) { s in
                 HStack(spacing: 6) {
                     Circle().fill(s.color).frame(width: 7, height: 7)
@@ -302,6 +307,7 @@ struct FlowLegend: View {
                 }
                 .textStyle(12)
                 .lineLimit(1)
+                .fixedSize()
             }
         }
     }
@@ -379,13 +385,14 @@ struct FlowingDots: View {
 
 struct FlowLayout: Layout {
     var spacing: CGFloat = 4
+    var lineSpacing: CGFloat?
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let width = proposal.width ?? .infinity
         var x: CGFloat = 0, y: CGFloat = 0, line: CGFloat = 0, maxX: CGFloat = 0
         for s in subviews {
             let size = s.sizeThatFits(.unspecified)
-            if x > 0, x + size.width > width { x = 0; y += line + spacing; line = 0 }
+            if x > 0, x + size.width > width { x = 0; y += line + (lineSpacing ?? spacing); line = 0 }
             x += size.width + spacing
             maxX = max(maxX, x - spacing)
             line = max(line, size.height)
@@ -397,7 +404,7 @@ struct FlowLayout: Layout {
         var x = bounds.minX, y = bounds.minY, line: CGFloat = 0
         for s in subviews {
             let size = s.sizeThatFits(.unspecified)
-            if x > bounds.minX, x + size.width > bounds.maxX { x = bounds.minX; y += line + spacing; line = 0 }
+            if x > bounds.minX, x + size.width > bounds.maxX { x = bounds.minX; y += line + (lineSpacing ?? spacing); line = 0 }
             line = max(line, size.height)
             s.place(at: CGPoint(x: x, y: y + 0), anchor: .topLeading, proposal: .unspecified)
             x += size.width + spacing
