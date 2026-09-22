@@ -6,6 +6,7 @@ enum Route: Hashable {
     case categoria(UUID)
     case cartoes, recibos, fixas, dividas, metas, ajustes
     case planejar(YearMonth)
+    case categorias(YearMonth)
 }
 
 enum HomeAction: Hashable {
@@ -54,6 +55,8 @@ struct HomeModel {
         let barColor: Color
         let sub: String
         let subColor: Color
+        /// Quanto a categoria pede atenção: estourada > variável perto do limite > fixa (não aparece na Home).
+        var rank: Double = -1
         var id: UUID { category.id }
     }
 
@@ -141,7 +144,7 @@ struct HomeModel {
                              fraction: s.fraction, percentText: "\(s.percent)%",
                              barColor: s.isOver ? .negative : .category(s.category.hue),
                              sub: s.isOver ? "passou " + R(-s.left) : "sobra " + R(s.left),
-                             subColor: s.isOver ? .negative : .inkTertiary)
+                             subColor: s.isOver ? .negative : .inkTertiary, rank: Self.attention(s))
             }
             categoriesRight = "\(R0(m.totalSpent)) de \(R0(m.totalBudget))"
 
@@ -198,7 +201,7 @@ struct HomeModel {
                                     fraction: s.fraction, percentText: "\(s.percent)%",
                                     barColor: l.cents < 0 ? .negative : .category(s.category.hue),
                                     sub: l.cents < 0 ? "passou " + R(-l) : l.cents == 0 ? "no orçamento" : "sobrou " + R(l),
-                                    subColor: l.cents < 0 ? .negative : .inkTertiary)
+                                    subColor: l.cents < 0 ? .negative : .inkTertiary, rank: Self.attention(s))
             }
             categoriesRight = R0(m.out) + " no total"
             pending = []
@@ -227,7 +230,8 @@ struct HomeModel {
             ]
             categoryCards = ledger.activeCategories.map { c in
                 CategoryCard(category: c, amount: R0(p.budget(c.id)), of: "planejado", fraction: 0, percentText: "",
-                             barColor: .category(c.hue), sub: c.budgetOrigin, subColor: .inkTertiary)
+                             barColor: .category(c.hue), sub: c.budgetOrigin, subColor: .inkTertiary,
+                             rank: c.nature.isFlexible ? Double(p.budget(c.id).cents) : -1)
             }
             categoriesRight = "toque para ajustar"
             pending = []
@@ -244,6 +248,16 @@ struct HomeModel {
         case .planning: .plan
         case nil: m < current ? .closed : m == current ? .current : .plan
         }
+    }
+
+    /// As categorias que aparecem na Home (no máximo 4). O resto fica em "Ver todas".
+    var focusCards: [CategoryCard] {
+        Array(categoryCards.filter { $0.rank >= 0 }.sorted { $0.rank > $1.rank }.prefix(4))
+    }
+
+    static func attention(_ s: CategoryStatus) -> Double {
+        if s.isOver { return 10 + Double(s.percent) / 100 }
+        return s.category.nature.isFlexible ? s.fraction : -1
     }
 
     func action(for card: CategoryCard) -> HomeAction? {

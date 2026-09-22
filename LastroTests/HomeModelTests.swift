@@ -25,6 +25,13 @@ struct HomeModelTests {
         #expect(m.rail.map(\.month.shortName) == ["JUL", "AGO", "SET", "OUT", "NOV", "DEZ"])
     }
 
+    @Test func homeMostraSoAsCategoriasQuePedemAtencao() {
+        let m = HomeModel(ledger: ledger, selected: DemoData.current, today: today)
+        // Estouradas primeiro, depois as variáveis mais perto do limite; fixas no orçamento ficam de fora.
+        #expect(m.focusCards.map(\.category.name) == ["Lazer & Assinaturas", "Saúde", "Mercado", "Transporte"])
+        #expect(m.categoryCards.count == 11)
+    }
+
     @Test func linhaDeAprovar() {
         let m = HomeModel(ledger: ledger, selected: DemoData.current, today: today)
         let matheus = m.pending.first { $0.entry.description == "Ajuda ao Matheus" }

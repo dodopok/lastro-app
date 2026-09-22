@@ -165,26 +165,43 @@ struct HojeView: View {
 
     // MARK: categorias
 
+    /// Só as categorias que pedem atenção; a grade completa fica em "Ver todas".
     private func categories(_ model: HomeModel) -> some View {
         VStack(spacing: 10) {
             HStack(alignment: .firstTextBaseline) {
                 Text("Categorias").sectionTitle()
                 Spacer()
-                Text(model.categoriesRight).textStyle(12.5).monospacedDigit().foregroundStyle(.ink.opacity(0.45))
+                Button("Ver todas") { perform(.push(.categorias(model.month))) }
+                    .textStyle(14, .medium)
+                    .foregroundStyle(.accent)
             }
             .padding(.horizontal, 4)
             .padding(.top, 6)
 
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                ForEach(model.categoryCards) { card in
+            VStack(spacing: 0) {
+                let focus = model.focusCards
+                if focus.isEmpty {
+                    Text("Tudo dentro do orçamento.")
+                        .textStyle(14).foregroundStyle(.inkSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 18).padding(.vertical, 20)
+                }
+                ForEach(Array(focus.enumerated()), id: \.element.id) { i, card in
+                    if i > 0 { RowDivider() }
                     let action = model.action(for: card)
                     Button { if let action { perform(action) } } label: {
-                        CategoryCardView(card: card)
+                        CategoryLine(card: card)
                     }
-                    .buttonStyle(PressScale())
+                    .buttonStyle(RowPressStyle())
                     .disabled(action == nil)
                 }
             }
+            .panel(radius: 24)
+
+            Text(model.categoriesRight)
+                .textStyle(12.5).monospacedDigit().foregroundStyle(.ink.opacity(0.45))
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal, 6)
         }
     }
 }
@@ -411,6 +428,34 @@ struct FlowLayout: Layout {
             s.place(at: CGPoint(x: x, y: y + 0), anchor: .topLeading, proposal: .unspecified)
             x += size.width + spacing
         }
+    }
+}
+
+/// Linha compacta de categoria (Home).
+struct CategoryLine: View {
+    let card: HomeModel.CategoryCard
+
+    var body: some View {
+        HStack(spacing: 12) {
+            CategoryIcon(card.category, size: 34, radius: 11)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(card.category.name).textStyle(14.5, .semibold).foregroundStyle(.ink).lineLimit(1)
+                    Spacer(minLength: 8)
+                    HStack(alignment: .firstTextBaseline, spacing: 3) {
+                        Text(card.amount).textStyle(14, .bold).foregroundStyle(.ink)
+                        Text(card.of).textStyle(11.5).foregroundStyle(.inkQuaternary)
+                    }
+                    .monospacedDigit()
+                }
+                if card.fraction > 0 || !card.percentText.isEmpty {
+                    ProgressBar(fraction: card.fraction, color: card.barColor)
+                }
+                Text(card.sub).textStyle(12, .medium).foregroundStyle(card.subColor).lineLimit(1)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
     }
 }
 
