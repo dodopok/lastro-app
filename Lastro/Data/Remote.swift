@@ -5,9 +5,10 @@ import LastroKit
 enum SyncTable: String, CaseIterable, Sendable {
     case profiles, categories, cards, cardCarryovers = "card_carryovers", bills, months
     case monthBudgets = "month_budgets", monthExtras = "month_extras", transactions, receipts, debts, goals, payments
+    case bankConnections = "bank_connections"
 
-    /// `payments` é escrita só pelo servidor.
-    var isWritable: Bool { self != .payments }
+    /// `payments` e as conexões de banco são escritas só pelo servidor.
+    var isWritable: Bool { self != .payments && self != .bankConnections }
     var conflictKey: String { self == .profiles ? "user_id" : "id" }
 }
 
@@ -25,6 +26,9 @@ protocol Remote: Sendable {
     /// Piloto: pedir pagamento e aprovar depois do Face ID.
     func requestPayment(_ request: PaymentRequest) async throws -> Data
     func approvePayment(_ id: UUID) async throws -> Data
+
+    /// Open Finance (edge function /pluggy).
+    func pluggy(_ method: String, _ path: String, body: [String: String]) async throws -> Data
 }
 
 /// Corpo de POST /pagamentos (supabase/functions/pagamentos).

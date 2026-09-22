@@ -24,7 +24,7 @@ public enum PayMethod: String, Codable, Sendable, CaseIterable {
 }
 
 public enum TxKind: String, Codable, Sendable { case fixa, parcela, variavel }
-public enum TxSource: String, Codable, Sendable { case manual, scan, share, bill, `import` }
+public enum TxSource: String, Codable, Sendable { case manual, scan, share, bill, `import`, bank }
 public enum MonthStatus: String, Codable, Sendable { case planning, open, closed }
 public enum ReceiptStatus: String, Codable, Sendable { case pending, saved, discarded }
 public enum GoalKind: String, Codable, Sendable { case emergency, custom }
@@ -228,13 +228,15 @@ public struct Entry: Codable, Sendable, Hashable, Identifiable {
     public var source: TxSource
     public var billId: UUID?
     public var estimated: Bool
+    /// Conferido com uma transação do banco (Open Finance).
+    public var bankConfirmedAt: Date?
     public var updatedAt: Date?
     public var deletedAt: Date?
 
     public init(id: UUID = UUID(), month: YearMonth, day: Int, description: String, categoryId: UUID,
                 amountCents: Money, method: PayMethod, cardId: UUID? = nil, confirmed: Bool = true,
                 kind: TxKind = .variavel, source: TxSource = .manual, billId: UUID? = nil, estimated: Bool = false,
-                updatedAt: Date? = nil, deletedAt: Date? = nil) {
+                bankConfirmedAt: Date? = nil, updatedAt: Date? = nil, deletedAt: Date? = nil) {
         precondition((method == .cartao) == (cardId != nil), "cartão exige cardId")
         self.id = id
         self.month = month
@@ -249,6 +251,7 @@ public struct Entry: Codable, Sendable, Hashable, Identifiable {
         self.source = source
         self.billId = billId
         self.estimated = estimated
+        self.bankConfirmedAt = bankConfirmedAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
@@ -352,6 +355,46 @@ public struct Payment: Codable, Sendable, Hashable, Identifiable {
     public var requiresApproval: Bool
     public var failureReason: String?
     public var updatedAt: Date?
+}
+
+/// Conexão com um banco via Pluggy (tabela `bank_connections`, escrita só pelo servidor).
+public struct BankConnection: Codable, Sendable, Hashable, Identifiable {
+    public var id: UUID
+    public var pluggyItemId: String
+    public var connectorName: String
+    public var connectorLogo: String?
+    public var status: String
+    public var errorMessage: String?
+    public var lastSyncedAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
+
+    public init(id: UUID = UUID(), pluggyItemId: String, connectorName: String, connectorLogo: String? = nil,
+                status: String, errorMessage: String? = nil, lastSyncedAt: Date? = nil) {
+        self.id = id
+        self.pluggyItemId = pluggyItemId
+        self.connectorName = connectorName
+        self.connectorLogo = connectorLogo
+        self.status = status
+        self.errorMessage = errorMessage
+        self.lastSyncedAt = lastSyncedAt
+    }
+
+    /// Precisa de ação do usuário (senha mudou, consentimento expirou…).
+    public var needsAttention: Bool {
+        ["LOGIN_ERROR", "OUTDATED", "WAITING_USER_INPUT", "WAITING_USER_ACTION"].contains(status)
+    }
+
+    public var statusLabel: String {
+        switch status {
+        case "UPDATED": "em dia"
+        case "UPDATING", "CREATED": "atualizando"
+        case "LOGIN_ERROR": "senha ou acesso mudou"
+        case "OUTDATED": "desatualizado"
+        case "WAITING_USER_INPUT", "WAITING_USER_ACTION": "precisa de você"
+        default: status.lowercased()
+        }
+    }
 }
 
 public enum LastroCoding {

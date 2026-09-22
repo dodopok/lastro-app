@@ -92,6 +92,12 @@ actor SyncEngine {
             goals: try await rows(.goals, as: Goal.self))
     }
 
+    func bankConnections() async throws -> [BankConnection] {
+        try await cache.rows(.bankConnections)
+            .map { try LastroCoding.decoder.decode(BankConnection.self, from: $0) }
+            .filter { $0.deletedAt == nil }
+    }
+
     func payments() async throws -> [Payment] {
         try await cache.rows(.payments).map { try LastroCoding.decoder.decode(Payment.self, from: $0) }
     }

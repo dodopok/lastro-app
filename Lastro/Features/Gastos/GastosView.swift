@@ -145,10 +145,17 @@ struct EntryRow: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text((entry.estimated ? "~" : "") + BRL.format(entry.amountCents))
                         .textStyle(15, .semibold).monospacedDigit().foregroundStyle(.ink)
-                    Text(entry.confirmed ? "confirmado" : "a confirmar")
-                        .textStyle(11, .semibold)
-                        .foregroundStyle(entry.confirmed ? Color.positive : Color.warning)
-                        .contentTransition(.opacity)
+                    if entry.bankConfirmedAt != nil {
+                        Label("banco", systemImage: "checkmark.seal.fill")
+                            .labelStyle(.titleAndIcon)
+                            .textStyle(11, .semibold)
+                            .foregroundStyle(Color.positive)
+                    } else {
+                        Text(entry.confirmed ? "confirmado" : "a confirmar")
+                            .textStyle(11, .semibold)
+                            .foregroundStyle(entry.confirmed ? Color.positive : Color.warning)
+                            .contentTransition(.opacity)
+                    }
                 }
             }
             .padding(.horizontal, 14)

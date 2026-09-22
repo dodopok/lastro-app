@@ -63,13 +63,31 @@ Edge functions (Deno):
 cd supabase/functions && deno test _shared/ && deno check */index.ts
 ```
 
-Segredos das functions (`supabase secrets set …`):
+Segredos das functions (`supabase secrets set …`). **Nunca** coloque isso no app nem no git:
 
 | Variável | Para quê |
 | --- | --- |
 | `PAYMENT_PROVIDER` | `sandbox` (padrão; não move dinheiro) |
 | `CRON_SECRET` | protege `/piloto`, chamado pelo cron |
-| `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` | conectar banco (fase 3) |
+| `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` | Open Finance (painel da Pluggy → Applications) |
+| `PLUGGY_WEBHOOK_SECRET` | segredo na URL do webhook da Pluggy (gere um aleatório) |
+| `PLUGGY_SANDBOX` | `true` mostra os bancos de teste da Pluggy no widget |
+
+### Ligando a Pluggy
+
+```sh
+supabase link --project-ref SEU-PROJETO
+supabase db push                                   # migrations (inclui bank_*)
+supabase secrets set \
+  PLUGGY_CLIENT_ID=... PLUGGY_CLIENT_SECRET=... \
+  PLUGGY_WEBHOOK_SECRET=$(openssl rand -hex 24) PLUGGY_SANDBOX=true
+supabase functions deploy pluggy pluggy-webhook
+```
+
+O webhook é registrado sozinho em cada conexão (vai no connect token), então não
+precisa configurar nada no painel da Pluggy. No app: Ajustes → Bancos conectados →
+Conectar banco. Com `PLUGGY_SANDBOX=true`, use o conector "Pluggy Bank" (usuário
+`user-ok`, senha `password-ok`) para testar sem banco de verdade.
 
 Para ligar o login com Apple no projeto Supabase, vá em Authentication → Providers →
 Apple e use o bundle id `app.lastro.ios`.

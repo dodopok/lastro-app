@@ -37,5 +37,8 @@ verify_jwt = true
 [functions.piloto]
 verify_jwt = false   # chamado pelo cron com o segredo CRON_SECRET
 
-[functions.pluggy-connect-token]
+[functions.pluggy]
 verify_jwt = true
+
+[functions.pluggy-webhook]
+verify_jwt = false   # chamado pela Pluggy; protegido por ?secret=PLUGGY_WEBHOOK_SECRET

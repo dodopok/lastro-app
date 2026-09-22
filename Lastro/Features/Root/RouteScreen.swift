@@ -15,6 +15,7 @@ struct RouteScreen: View {
         case .ajustes: AjustesView()
         case .planejar(let m): PlanejarView(month: m)
         case .categorias(let m): CategoriasView(month: m)
+        case .bancos: BancosView()
         }
     }
 }

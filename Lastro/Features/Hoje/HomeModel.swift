@@ -7,6 +7,7 @@ enum Route: Hashable {
     case cartoes, recibos, fixas, dividas, metas, ajustes
     case planejar(YearMonth)
     case categorias(YearMonth)
+    case bancos
 }
 
 enum HomeAction: Hashable {

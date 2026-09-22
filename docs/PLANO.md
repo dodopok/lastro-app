@@ -133,13 +133,15 @@ implementar `send()` e mudar `PAYMENT_PROVIDER`.
 - [x] Importador de planilha: CSV (`;` ou `,`, formato BR ou US) → contas fixas e categorias, com prévia
 - [ ] XLSX direto (hoje: exportar a aba como CSV)
 
-**Fase 3: piloto de verdade**
-- [ ] Tela Piloto (toggles, trava, status vindos de `payments`)
-- [ ] Push (APNs) para `awaiting_approval` e `blocked`
-- [ ] Provedor de pagamento real atrás de `PaymentProvider`
+**Fase 3: banco e piloto de verdade**
+- [x] **Open Finance (Pluggy)**: widget oficial no app, contas e transações sincronizadas por webhook
+- [x] **Conciliação** (`_shared/reconcile.ts`, testada): débito do banco confirma o lançamento que já existia (fixa pelo valor ± 7 dias; variável estimada ± 35% e o valor real substitui; manual pelo valor ± 3 dias) ou vira lançamento novo já categorizado; fatura e transferência própria ficam de fora
+- [x] Cartão de crédito da Pluggy ligado (ou criado) como cartão do Lastro
+- [x] Selo "banco" nos Gastos
+- [ ] Push (APNs) para `awaiting_approval`, `blocked` e conexão com erro
+- [ ] Provedor de pagamento real atrás de `PaymentProvider` (candidato: Pix automático / Smart Transfers da própria Pluggy)
 - [ ] Linha digitável de boleto nas fixas
-- [ ] Pluggy: conectar banco, webhooks, conciliação automática ("o mês bate com o banco")
-- [ ] Dívidas, Metas e Ajustes (Face ID ao abrir, lembrete às 21h, widget, Siri)
+- [ ] Entradas (salário) do banco alimentando a renda do mês
 
 ## Rodando
 

@@ -58,6 +58,13 @@ final class SupabaseRemote: Remote {
         try await invoke("pagamentos/\(id.uuidString.lowercased())/aprovar", body: [String: String]())
     }
 
+    func pluggy(_ method: String, _ path: String, body: [String: String]) async throws -> Data {
+        let m: FunctionInvokeOptions.Method = method == "DELETE" ? .delete : .post
+        return try await client.functions.invoke("pluggy/\(path)", options: FunctionInvokeOptions(method: m, body: body)) { data, _ in
+            data
+        }
+    }
+
     private func invoke(_ name: String, body: some Encodable & Sendable) async throws -> Data {
         try await client.functions.invoke(name, options: FunctionInvokeOptions(method: .post, body: body)) { data, _ in
             data

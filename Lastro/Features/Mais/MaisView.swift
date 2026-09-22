@@ -264,13 +264,8 @@ struct AjustesView: View {
             group("Dados") {
                 row("Importar planilha", "doc.text") { importing = true }
                 RowDivider()
-                HStack(spacing: 12) {
-                    icon("building.columns")
-                    Text("Conectar banco").textStyle(15, .medium)
-                    Spacer()
-                    Tag(text: "em breve · Pluggy").padding(.vertical, 1)
-                }
-                .padding(.horizontal, 14).frame(minHeight: 50)
+                link("Bancos conectados", "building.columns",
+                     note: store.bankConnections.isEmpty ? "Pluggy" : "\(store.bankConnections.count)", route: .bancos)
                 RowDivider()
                 if let csv {
                     ShareLink(item: csv) { rowLabel("Exportar CSV", "square.and.arrow.down", note: csv.lastPathComponent) }

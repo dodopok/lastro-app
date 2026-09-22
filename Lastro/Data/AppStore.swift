@@ -36,6 +36,9 @@ final class AppStore {
     /// Tela de escanear cupom aberta.
     var scanning = false
     var spendingFilter: SpendingFilter = .todos
+    /// Bancos conectados via Pluggy (lidos do servidor).
+    private(set) var bankConnections: [BankConnection] = []
+    private(set) var isSyncingBanks = false
 
     let isDemo: Bool
     private let engine: SyncEngine?
@@ -109,6 +112,7 @@ final class AppStore {
             // Mês corrente e os 3 seguintes (planejamento) já nascem com as fixas.
             for offset in 0...3 { try await remote.openMonth(today.month.adding(months: offset)) }
             try await engine.pull()
+            bankConnections = (try? await engine.bankConnections()) ?? []
             if let fresh = try await engine.loadLedger() {
                 ledger = fresh
                 phase = fresh.categories.isEmpty ? .onboarding : .ready
@@ -417,6 +421,78 @@ final class AppStore {
             return url
         } catch {
             return nil
+        }
+    }
+
+    // MARK: Open Finance (Pluggy)
+
+    struct BankSyncSummary: Decodable {
+        var accounts = 0, imported = 0, matched = 0, created = 0, ignored = 0
+
+        var message: String {
+            if imported == 0 { return "Nada novo no banco" }
+            var parts: [String] = []
+            if matched > 0 { parts.append("\(matched) conferido\(matched == 1 ? "" : "s")") }
+            if created > 0 { parts.append("\(created) novo\(created == 1 ? "" : "s")") }
+            return parts.isEmpty ? "Tudo já batia com o banco" : parts.joined(separator: " · ")
+        }
+    }
+
+    struct PluggyToken: Decodable {
+        let connectToken: String
+        let sandbox: Bool
+    }
+
+    enum BankError: LocalizedError {
+        case offline
+        var errorDescription: String? { "Conectar banco precisa do servidor (Supabase) configurado." }
+    }
+
+    /// Token de uso único para abrir o widget da Pluggy. `itemId` = reconectar um banco existente.
+    func pluggyToken(itemId: String? = nil) async throws -> PluggyToken {
+        guard let remote else { throw BankError.offline }
+        let data = try await remote.pluggy("POST", "token", body: itemId.map { ["itemId": $0] } ?? [:])
+        return try JSONDecoder().decode(PluggyToken.self, from: data)
+    }
+
+    /// Depois do widget: registra o item e faz a 1ª sincronização (mês corrente).
+    func connectBank(itemId: String) async {
+        guard let remote else { return }
+        isSyncingBanks = true
+        defer { isSyncingBanks = false }
+        do {
+            let data = try await remote.pluggy("POST", "items", body: ["itemId": itemId])
+            let summary = try JSONDecoder().decode(BankSyncSummary.self, from: data)
+            await refresh()
+            show("Banco conectado · \(summary.message)")
+        } catch {
+            show("Não deu para conectar o banco")
+        }
+    }
+
+    func syncBanks() async {
+        guard let remote, !isSyncingBanks else { return }
+        isSyncingBanks = true
+        defer { isSyncingBanks = false }
+        do {
+            let data = try await remote.pluggy("POST", "sync", body: [:])
+            let summary = try JSONDecoder().decode(BankSyncSummary.self, from: data)
+            await refresh()
+            show(summary.message)
+        } catch {
+            show("Não deu para falar com o banco agora")
+        }
+    }
+
+    func disconnect(_ connection: BankConnection) async {
+        guard let remote else { return }
+        do {
+            _ = try await remote.pluggy("DELETE", "items/\(connection.id.uuidString.lowercased())", body: [:])
+            bankConnections.removeAll { $0.id == connection.id }
+            await refresh()
+            show("\(connection.connectorName) desconectado")
+        } catch {
+            show("Não deu para desconectar agora")
         }
     }
 

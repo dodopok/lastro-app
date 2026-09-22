@@ -2,7 +2,7 @@
 // POST /pagamentos/{id}/aprovar    depois do Face ID no aparelho
 //
 // valor em centavos. chave = chave de idempotência gerada pelo app (UUID).
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { userFrom } from "../_shared/auth.ts";
 import { adminClient, approve, json, submit } from "../_shared/payments.ts";
 
 Deno.serve(async (req) => {
@@ -44,14 +44,3 @@ Deno.serve(async (req) => {
     return json({ erro: "falha ao processar pagamento" }, 500);
   }
 });
-
-async function userFrom(req: Request): Promise<string | null> {
-  const auth = req.headers.get("authorization");
-  if (!auth) return null;
-  const client = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
-    global: { headers: { authorization: auth } },
-    auth: { persistSession: false },
-  });
-  const { data } = await client.auth.getUser();
-  return data.user?.id ?? null;
-}
