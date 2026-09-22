@@ -90,7 +90,7 @@ public enum ReceiptParser {
 
     static let genericKeywords: [(String, [String])] = [
         ("rango", ["padaria", "panificadora", "cafe", "cafeteria", "restaurante", "lanchonete", "pizzaria", "hamburgueria", "sorveteria", "confeitaria"]),
-        ("mercado", ["supermercado", "mercado", "hortifruti", "sacolao", "atacadista", "mercearia", "acougue"]),
+        ("mercado", ["supermercado", "minimercado", "mercadinho", "mercado", "hortifruti", "sacolao", "atacadista", "mercearia", "acougue"]),
         ("transporte", ["posto", "combustivel", "gasolina", "etanol", "estacionamento", "pedagio"]),
         ("saude", ["farmacia", "drogaria", "laboratorio", "clinica"]),
         ("lazer", ["cinema", "ingresso", "teatro", "livraria"]),
