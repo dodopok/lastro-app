@@ -76,12 +76,13 @@ struct MainView: View {
         .overlay { ApprovalAlert() }
         .sheet(item: $store.launch) { draft in
             LancarSheet(draft: draft,
-                        onScan: { store.show("Escanear cupom chega na próxima fase") },
+                        onScan: { store.openScanner(after: .milliseconds(350)) },
                         onReceipts: { push(.recibos) })
                 .presentationDetents([.large])
                 .presentationCornerRadius(44)
                 .presentationDragIndicator(.visible)
         }
+        .fullScreenCover(isPresented: $store.scanning) { ScanView() }
         .sensoryFeedback(.selection, trigger: tab)
     }
 

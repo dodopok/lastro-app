@@ -33,6 +33,8 @@ final class AppStore {
     var approval: Approval? = nil
     /// Sheet de lançamento aberta (qualquer tela pode abrir, ex.: "Editar" num recibo).
     var launch: LaunchDraft? = nil
+    /// Tela de escanear cupom aberta.
+    var scanning = false
     var spendingFilter: SpendingFilter = .todos
 
     let isDemo: Bool
@@ -148,6 +150,8 @@ final class AppStore {
         show("\(ledger.activeBills.count) contas fixas importadas")
     }
 
+    func finishOnboarding() { phase = .ready }
+
     func startEmpty() {
         phase = .ready
         show("Começando do zero")
@@ -209,6 +213,21 @@ final class AppStore {
 
     func open(_ draft: LaunchDraft = LaunchDraft()) { launch = draft }
 
+    /// Abre o lançamento depois de um atraso (espera outra tela terminar de fechar).
+    func openLauncher(_ draft: LaunchDraft = LaunchDraft(), after delay: Duration) {
+        Task {
+            try? await Task.sleep(for: delay)
+            launch = draft
+        }
+    }
+
+    func openScanner(after delay: Duration = .zero) {
+        Task {
+            if delay > .zero { try? await Task.sleep(for: delay) }
+            scanning = true
+        }
+    }
+
     // MARK: recibos
 
     func confirmReceipt(_ r: Receipt) {
@@ -220,6 +239,23 @@ final class AppStore {
     func edit(_ r: Receipt) {
         launch = LaunchDraft(amount: r.amountCents, categoryId: r.categoryId, cardId: r.cardId,
                              description: r.merchant, receiptId: r.id)
+    }
+
+    /// Recibos que chegaram pela extensão de compartilhar (App Group).
+    func drainInbox() {
+        let items = ReceiptInbox.drain()
+        guard !items.isEmpty else { return }
+        let cats = ledger.activeCategories
+        for i in items {
+            let category = i.categorySlug.flatMap { slug in cats.first { $0.slug == slug } }
+                ?? cats.first { $0.nature == .variavel }
+            let r = Receipt(id: i.id, merchant: i.merchant, originLabel: i.originLabel,
+                            source: i.source == "scan" ? .scan : .share, amountCents: Money(cents: i.amountCents),
+                            categoryId: category?.id, cardId: nil, capturedAt: i.capturedAt)
+            ledger.receipts.append(r)
+            persist(.receipts, r)
+        }
+        show(items.count == 1 ? "1 recibo chegou" : "\(items.count) recibos chegaram")
     }
 
     // MARK: planejamento
@@ -257,7 +293,7 @@ final class AppStore {
     // MARK: contas fixas
 
     /// Cria ou edita. Vale dos meses seguintes em diante (o servidor faz o mesmo por trigger).
-    func save(_ bill: Bill) {
+    func save(_ bill: Bill, announce: Bool = true) {
         let isNew = !ledger.bills.contains { $0.id == bill.id }
         if isNew {
             ledger.bills.append(bill)
@@ -266,7 +302,52 @@ final class AppStore {
         }
         propagate(bill, isNew: isNew)
         persist(.bills, id: bill.id, bill)
+        guard announce else { return }
         show(isNew ? "Vale a partir de \(today.month.next.name.lowercased())" : "Alterações valem de \(today.month.next.name.lowercased()) em diante")
+    }
+
+/// Planilha → contas fixas. Categorias que não existem são criadas (fixas, com cor própria).
+    @discardableResult
+    func importBills(_ rows: [ImportedBill]) -> Int {
+        func key(_ s: String) -> String {
+            s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "pt_BR"))
+                .trimmingCharacters(in: .whitespaces)
+        }
+        let hues: [Double] = [265, 160, 75, 225, 20, 320, 290, 195, 345, 45, 120, 10, 250, 140]
+        var byName = Dictionary(ledger.activeCategories.map { (key($0.name), $0) }, uniquingKeysWith: { a, _ in a })
+        let fallback = ledger.activeCategories.first { $0.nature == .fixo } ?? ledger.activeCategories.first
+        let existing = Set(ledger.activeBills.map { key($0.name) })
+        var imported = 0
+
+        for row in rows where !existing.contains(key(row.name)) {
+            var category = row.categoryName.flatMap { byName[key($0)] } ?? (row.categoryName == nil ? fallback : nil)
+            if category == nil {
+                let name = row.categoryName ?? "Contas"
+                let slug = key(name).replacingOccurrences(of: " ", with: "-")
+                let c = BudgetCategory(slug: slug, name: name, hue: hues[ledger.categories.count % hues.count],
+                                       nature: .fixo, defaultBudgetCents: .zero, symbol: "circle.grid.2x2",
+                                       position: ledger.categories.count)
+                ledger.categories.append(c)
+                persist(.categories, c)  // antes das contas: chave estrangeira
+                byName[key(name)] = c
+                category = c
+            }
+            guard let category else { continue }
+            save(Bill(name: row.name, categoryId: category.id, dueDay: row.dueDay, amountCents: row.amount,
+                      isVariable: row.isVariable), announce: false)
+            imported += 1
+        }
+
+        // Orçamento das categorias fixas acompanha o que foi importado.
+        for i in ledger.categories.indices where ledger.categories[i].nature == .fixo {
+            let total = ledger.activeBills.filter { $0.categoryId == ledger.categories[i].id }.sum(\.amountCents)
+            if total > ledger.categories[i].defaultBudgetCents {
+                ledger.categories[i].defaultBudgetCents = total
+                persist(.categories, ledger.categories[i])
+            }
+        }
+        show(imported == 1 ? "1 conta fixa importada" : "\(imported) contas fixas importadas")
+        return imported
     }
 
     func deleteBill(_ id: UUID) {

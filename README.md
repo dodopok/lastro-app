@@ -23,6 +23,11 @@ xcodegen generate
 open Lastro.xcodeproj
 ```
 
+O projeto tem dois alvos: o app (`Lastro`) e a extensão de compartilhar
+(`LastroShare`). Os dois usam o App Group `group.app.lastro` para a caixa de
+entrada de recibos. Num aparelho, ative App Groups para os dois bundle ids no
+seu time (o simulador não exige).
+
 Sem configurar nada, o app abre em **modo demo**: os dados do protótipo ficam em
 memória, sem login e sem rede. Para usar o Supabase:
 

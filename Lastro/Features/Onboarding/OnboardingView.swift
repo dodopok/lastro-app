@@ -6,6 +6,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(AppStore.self) private var store
     @State private var working = false
+    @State private var importing = false
 
     private let rows: [(String, String)] = [
         ("DESPESAS", "18 contas fixas"), ("Categoria", "11 categorias novas"), ("Data", "Dia de vencimento"),
@@ -81,12 +82,24 @@ struct OnboardingView: View {
                             .overlay { Capsule().strokeBorder(.ink.opacity(0.08), lineWidth: 1) }
                     }
                     .buttonStyle(PressScale())
+
+                    Button { importing = true } label: {
+                        Label("Importar o CSV da minha planilha", systemImage: "doc.badge.plus")
+                            .textStyle(14.5, .semibold)
+                            .foregroundStyle(Color(OKLCH(0.5, 0.2, 262)))
+                            .frame(maxWidth: .infinity).frame(height: 44)
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(PressScale())
                 }
                 .foregroundStyle(.ink)
                 .padding(.horizontal, 20)
                 .padding(.top, 40)
                 .padding(.bottom, 40)
             }
+        }
+        .sheet(isPresented: $importing) {
+            ImportarView { store.finishOnboarding() }
         }
     }
 }

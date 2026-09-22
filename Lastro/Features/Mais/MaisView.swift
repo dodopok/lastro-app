@@ -257,11 +257,12 @@ struct AjustesView: View {
     @AppStorage("faceid.onOpen") private var faceID = true
     @AppStorage("reminder.enabled") private var reminder = true
     @State private var csv: URL?
+    @State private var importing = false
 
     var body: some View {
         Screen(title: "Ajustes", spacing: 10) {
             group("Dados") {
-                row("Importar planilha", "doc.text") { soon("Importar planilha") }
+                row("Importar planilha", "doc.text") { importing = true }
                 RowDivider()
                 HStack(spacing: 12) {
                     icon("building.columns")
@@ -281,7 +282,7 @@ struct AjustesView: View {
             group("Lançar rápido") {
                 toggle("Extensão de compartilhamento", "square.and.arrow.up", $share)
                 RowDivider()
-                row("Escanear cupom", "text.viewfinder") { soon("Escanear cupom") }
+                row("Escanear cupom", "text.viewfinder") { store.openScanner() }
                 RowDivider()
                 toggle("Atalho da Siri", "mic", $siri)
                 RowDivider()
@@ -307,9 +308,9 @@ struct AjustesView: View {
                     .frame(maxWidth: .infinity).frame(height: 46)
             }
         }
+        .sheet(isPresented: $importing) { ImportarView() }
     }
 
-    private func soon(_ what: String) { store.show("\(what) chega na próxima fase") }
 
     private func group<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 6) {

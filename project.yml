@@ -35,10 +35,12 @@ targets:
       - package: LastroKit
       - package: Supabase
         product: Supabase
+      - target: LastroShare
     entitlements:
       path: Lastro/Lastro.entitlements
       properties:
         com.apple.developer.applesignin: [Default]
+        com.apple.security.application-groups: [group.app.lastro]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.lastro.ios
@@ -59,6 +61,42 @@ targets:
         SUPABASE_URL: $(SUPABASE_URL)
         SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
         LASTRO_DEMO: $(LASTRO_DEMO)
+
+  # Extensão de compartilhar: recibo do iFood/Uber (texto ou print) → Recibos.
+  LastroShare:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: LastroShare
+      - path: Lastro/Shared
+      - path: Lastro/DesignSystem
+    dependencies:
+      - package: LastroKit
+    entitlements:
+      path: LastroShare/LastroShare.entitlements
+      properties:
+        com.apple.security.application-groups: [group.app.lastro]
+    info:
+      path: LastroShare/Info.plist
+      properties:
+        CFBundleDisplayName: Lastro
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsImageWithMaxCount: 1
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.lastro.ios.share
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Lastro
+        SKIP_INSTALL: YES
 
   LastroTests:
     type: bundle.unit-test

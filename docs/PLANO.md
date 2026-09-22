@@ -127,9 +127,11 @@ implementar `send()` e mudar `PAYMENT_PROVIDER`.
 - [x] Contas fixas: lista, criar, editar e apagar
 - [x] Piloto (toggles, trava, status) · Dívidas · Metas · Mais · Ajustes (exportar CSV)
 - [x] Recibos: confirmar e editar
-- [ ] **Extensão de compartilhar** (App Group com o cache)
-- [ ] **Escanear cupom** (VisionKit `DataScannerViewController` + extração do total)
-- [ ] Importador de planilha (CSV/XLSX → fixas e categorias)
+- [x] Home só com as categorias que pedem atenção (grade completa em "Ver todas")
+- [x] **Extensão de compartilhar**: texto ou print (OCR) → caixa de entrada no App Group → Recibos
+- [x] **Escanear cupom**: Live Text da câmera (`DataScannerViewController`) ou foto (Vision); `ReceiptParser` acha total, loja e categoria
+- [x] Importador de planilha: CSV (`;` ou `,`, formato BR ou US) → contas fixas e categorias, com prévia
+- [ ] XLSX direto (hoje: exportar a aba como CSV)
 
 **Fase 3: piloto de verdade**
 - [ ] Tela Piloto (toggles, trava, status vindos de `payments`)

@@ -67,4 +67,24 @@ struct HomeModelTests {
         #expect(store.ledger.entries.count == before + 1)
         #expect(store.toast?.message == "R$ 23,80 salvo em Rango & Café")
     }
+
+    @Test func importarPlanilha() {
+        let store = AppStore.preview()
+        let cats = store.ledger.categories.count
+        let bills = store.ledger.activeBills.count
+        let n = store.importBills([
+            ImportedBill(name: "Aluguel", amount: Money(cents: 320_000), categoryName: "Moradia", dueDay: 5, isVariable: false),  // já existe
+            ImportedBill(name: "Academia", amount: Money(cents: 12_000), categoryName: "Saúde", dueDay: 10, isVariable: false),
+            ImportedBill(name: "Pet shop", amount: Money(cents: 25_000), categoryName: "Pets", dueDay: 15, isVariable: true),
+        ])
+        #expect(n == 2)
+        #expect(store.ledger.activeBills.count == bills + 2)
+        #expect(store.ledger.categories.count == cats + 1)  // "Pets" nasceu
+        let pets = store.ledger.categories.first { $0.name == "Pets" }
+        #expect(pets?.nature == .fixo && pets?.defaultBudgetCents == Money(cents: 25_000))
+        // Contas novas já aparecem nos meses em planejamento
+        let oct = store.ledger.entries(in: DemoData.current.next)
+        #expect(oct.contains { $0.description == "Academia" && !$0.confirmed })
+    }
 }
+

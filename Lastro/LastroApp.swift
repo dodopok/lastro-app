@@ -11,9 +11,14 @@ struct LastroApp: App {
                 .environment(store)
                 .tint(.accent)
                 .preferredColorScheme(.light)
-                .task { await store.start() }
+                .task {
+                    await store.start()
+                    store.drainInbox()
+                }
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { Task { await store.refresh() } }
+                    guard phase == .active else { return }
+                    store.drainInbox()
+                    Task { await store.refresh() }
                 }
         }
     }
