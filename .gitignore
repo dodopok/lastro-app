@@ -1,0 +1,20 @@
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+build/
+.swiftpm/
+Packages/*/.build/
+*.xcresult
+
+# Segredos
+Config/Secrets.xcconfig
+supabase/.env
+supabase/.temp/
+supabase/functions/.env
+
+# Diversos
+.DS_Store
+node_modules/
+Lastro/Info.plist

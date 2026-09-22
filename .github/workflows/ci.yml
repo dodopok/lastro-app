@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Supabase (schema + edge functions)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Schema, RLS e regras (Postgres local)
+        run: supabase/tests/run.sh
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Edge functions
+        working-directory: supabase/functions
+        run: |
+          deno check pagamentos/index.ts piloto/index.ts pluggy-connect-token/index.ts
+          deno test _shared/
+
+  ios:
+    name: iOS (LastroKit + app)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ferramentas
+        run: |
+          brew install xcodegen xcbeautify
+          xcodebuild -version
+      - name: LastroKit
+        run: swift test --package-path Packages/LastroKit
+      - name: Gerar projeto
+        run: xcodegen generate
+      - name: Build e testes do app
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Lastro.xcodeproj -scheme Lastro \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            CODE_SIGNING_ALLOWED=NO LASTRO_DEMO=YES \
+            | xcbeautify || exit 1

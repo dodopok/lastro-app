@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E7E8EC;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:oklch(.5 .2 262)}a:hover{color:oklch(.42 .2 262)}::-webkit-scrollbar{display:none}input{font:inherit;color:inherit}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;gap:56px;justify-content:center;align-items:flex-start;padding:48px 40px;font-family:-apple-system,'SF Pro Text','SF Pro Display',Geist,system-ui,sans-serif;color:#15161B">
+<sc-if value="{{ showIndex }}" hint-placeholder-val="{{ true }}">
+<aside style="width:250px;flex:none;display:flex;flex-direction:column;gap:22px;padding-top:12px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font-size:28px;font-weight:700;letter-spacing:-.03em">Lastro</div>
+<div style="font-size:13px;line-height:1.5;color:rgba(21,22,27,.55);text-wrap:pretty">Protótipo navegável · iOS 26 · SwiftUI + Liquid Glass. Tudo funciona: confirmar, lançar, planejar, piloto.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ index }}" as="it" hint-placeholder-count="16">
+<div onClick="{{ it.go }}" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;background:{{ it.bg }};color:{{ it.fg }}"><span style="font:500 10.5px 'Geist Mono',ui-monospace,monospace;opacity:.5;width:18px">{{ it.n }}</span>{{ it.label }}</div>
+</sc-for>
+</div>
+<div style="font-size:12px;line-height:1.6;color:rgba(21,22,27,.5);border-top:1px solid rgba(21,22,27,.1);padding-top:16px;text-wrap:pretty">Uma cor só de ação (azul cobalto). Cor de categoria só em ícones e barras. Números tabulares, centavos atenuados. Vidro apenas em camadas que flutuam: tab bar, botões, card herói, sheets.</div>
+</aside>
+</sc-if>
+<div style="flex:none;width:426px;height:898px;border-radius:68px;padding:12px;background:#0E0F12;box-shadow:inset 0 0 0 1.5px #3a3b40,0 50px 90px -40px rgba(20,22,40,.5),0 14px 30px -14px rgba(20,22,40,.35)">
+<div style="position:relative;width:402px;height:874px;border-radius:56px;overflow:hidden;background:#F3F3F1;isolation:isolate">
+<div style="position:absolute;inset:0;z-index:0;pointer-events:none">
+<div style="position:absolute;width:440px;height:440px;left:-170px;top:-150px;border-radius:50%;background:oklch(.84 .1 262);filter:blur(80px);opacity:.5"></div>
+<div style="position:absolute;width:380px;height:380px;right:-190px;top:320px;border-radius:50%;background:oklch(.9 .09 165);filter:blur(80px);opacity:.6"></div>
+<div style="position:absolute;width:400px;height:400px;left:-160px;bottom:-140px;border-radius:50%;background:oklch(.9 .08 55);filter:blur(80px);opacity:.6"></div>
+</div>
+<div ref="{{ scroller }}" style="position:absolute;inset:0;overflow-y:auto;z-index:1;padding:62px 0 140px">
+<sc-if value="{{ is.hoje }}" hint-placeholder-val="{{ true }}">
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;padding:8px 4px 0">
+<div><div style="font-size:13px;font-weight:500;color:rgba(21,22,27,.5)">{{ home.subtitle }}</div><div style="font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.1">{{ home.monthName }}</div></div>
+<div style="display:flex;gap:8px;align-items:center">
+<div onClick="{{ goHist }}" style="height:40px;padding:0 14px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:14px;font-weight:600;background:rgba(255,255,255,.62);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 6px 18px -8px rgba(22,24,40,.22)">2026</div>
+<div onClick="{{ goRecibos }}" style="position:relative;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(255,255,255,.62);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 6px 18px -8px rgba(22,24,40,.22)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h4l1.5 3h5L16 13h4M5 5h14l1 8v6H4v-6z"></path></svg>
+<sc-if value="{{ home.hasRcp }}"><div style="position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:oklch(.57 .2 25);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;border:2px solid #F3F3F1">{{ home.rcpCount }}</div></sc-if></div>
+</div>
+</div>
+<div style="display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(255,255,255,.5);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff">
+<sc-for list="{{ rail }}" as="m" hint-placeholder-count="6">
+<div onClick="{{ m.select }}" style="position:relative;flex:1;height:34px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:12.5px;font-weight:650;letter-spacing:.06em;transition:background 220ms,color 220ms;background:{{ m.bg }};color:{{ m.fg }}">{{ m.label }}<div style="position:absolute;bottom:4px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;opacity:{{ m.dot }};background:{{ m.dotC }}"></div></div>
+</sc-for>
+</div>
+<div style="position:relative">
+<div style="position:absolute;right:-20px;top:-30px;width:210px;height:210px;border-radius:50%;background:oklch(.72 .16 262);filter:blur(46px);opacity:.38;pointer-events:none"></div>
+<div style="position:absolute;left:10px;bottom:-30px;width:160px;height:120px;border-radius:50%;background:oklch(.85 .12 160);filter:blur(40px);opacity:.5;pointer-events:none"></div>
+<div onClick="{{ cycleHero }}" style="position:relative;overflow:hidden;border-radius:32px;padding:22px 22px 18px;cursor:pointer;user-select:none;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.5));backdrop-filter:blur(34px) saturate(190%);-webkit-backdrop-filter:blur(34px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.5),0 24px 50px -24px rgba(40,50,120,.32),0 2px 6px rgba(22,24,40,.04)">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:600;color:rgba(21,22,27,.6)">{{ hero.label }}</div>
+<div style="display:flex;gap:4px"><sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="3"><div style="height:6px;border-radius:999px;transition:width 220ms;width:{{ d.w }};background:{{ d.c }}"></div></sc-for></div></div>
+<div style="display:flex;align-items:baseline;margin-top:8px;font-variant-numeric:tabular-nums;color:{{ hero.color }}"><span style="font-size:22px;font-weight:600;margin-right:6px;letter-spacing:-.02em">{{ hero.sign }}R$</span><span style="font-size:58px;font-weight:700;line-height:1;letter-spacing:-.05em">{{ hero.int }}</span><span style="font-size:26px;font-weight:600;opacity:.38;letter-spacing:-.03em">{{ hero.cents }}</span></div>
+<div style="font-size:13.5px;color:rgba(21,22,27,.55);margin-top:6px">{{ hero.sub }}</div>
+<div style="display:flex;gap:3px;height:10px;margin-top:20px"><sc-for list="{{ segs }}" as="g" hint-placeholder-count="3"><div style="height:100%;border-radius:999px;min-width:6px;transition:flex 300ms;flex:{{ g.f }};background:{{ g.c }}"></div></sc-for></div>
+<div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap"><sc-for list="{{ segs }}" as="g" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(21,22,27,.55)"><div style="width:7px;height:7px;border-radius:50%;background:{{ g.c }}"></div>{{ g.label }}<span style="font-weight:600;color:#15161B;font-variant-numeric:tabular-nums">{{ g.v }}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px">
+<sc-for list="{{ shortcuts }}" as="k" hint-placeholder-count="2">
+<div onClick="{{ k.go }}" style="border-radius:22px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:3px;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -16px rgba(22,24,40,.18)" style-active="transform:scale(.98)">
+<div style="font-size:12.5px;font-weight:500;color:rgba(21,22,27,.55)">{{ k.label }}</div>
+<div style="font-size:20px;font-weight:700;letter-spacing:-.025em;font-variant-numeric:tabular-nums">{{ k.value }}</div>
+<div style="font-size:11.5px;color:rgba(21,22,27,.42)">{{ k.sub }}</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ home.isCurrent }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 4px"><div style="display:flex;align-items:baseline;gap:8px"><div style="font-size:20px;font-weight:700;letter-spacing:-.025em">Para confirmar</div><div style="font-size:14px;font-weight:600;color:rgba(21,22,27,.4)">{{ home.pendCount }}</div></div><div onClick="{{ goPend }}" style="font-size:14px;font-weight:500;color:oklch(.55 .21 262);cursor:pointer">Ver todos</div></div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -16px rgba(22,24,40,.18)">
+<sc-if value="{{ home.allDone }}"><div style="padding:22px 18px;font-size:14px;color:rgba(21,22,27,.55)">Tudo confirmado. O mês bate com o banco.</div></sc-if>
+<sc-for list="{{ pending }}" as="t" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:{{ t.sep }}">
+<div onClick="{{ t.toggle }}" style="width:26px;height:26px;flex:none;border-radius:50%;border:1.8px solid rgba(21,22,27,.22);cursor:pointer;display:grid;place-items:center" style-hover="border-color:oklch(.56 .14 155)"></div>
+<div style="width:36px;height:36px;flex:none;border-radius:12px;display:grid;place-items:center;background:{{ t.bg }};color:{{ t.fg }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.desc }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ t.meta }}</div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.val }}</div><sc-if value="{{ t.hasTag }}"><div style="font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;color:{{ t.tagC }};background:{{ t.tagBg }}">{{ t.tag }}</div></sc-if></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ home.notClosed }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ goPiloto }}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:22px;cursor:pointer;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -16px rgba(22,24,40,.18)">
+<div style="width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,oklch(.63 .2 262),oklch(.5 .22 264))"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">Piloto automático</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ home.pilotLine }}</div></div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(21,22,27,.3)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</div>
+</sc-if>
+<sc-if value="{{ home.isCurrent }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ goMiud }}" style="border-radius:24px;padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;gap:10px;background:linear-gradient(140deg,oklch(.96 .06 85 / .85),rgba(255,255,255,.5));backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -16px oklch(.6 .15 70 / .35)">
+<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:oklch(.52 .13 62)">Miudezas</div>
+<div style="font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.25;text-wrap:pretty">{{ miud.title }}</div>
+<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap"><sc-for list="{{ miud.dots }}" as="d" hint-placeholder-count="14"><div style="border-radius:50%;opacity:.85;width:{{ d.s }};height:{{ d.s }};background:{{ d.c }}"></div></sc-for></div>
+<div style="font-size:13px;color:rgba(21,22,27,.6);text-wrap:pretty">{{ miud.sub }}</div>
+</div>
+</sc-if>
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:6px 4px 0"><div style="font-size:20px;font-weight:700;letter-spacing:-.025em">Categorias</div><div style="font-size:12.5px;color:rgba(21,22,27,.45);font-variant-numeric:tabular-nums">{{ home.catRight }}</div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+<sc-for list="{{ catCards }}" as="c" hint-placeholder-count="11">
+<div onClick="{{ c.go }}" style="border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;min-width:0;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -16px rgba(22,24,40,.18)" style-active="transform:scale(.98)">
+<div style="display:flex;align-items:center;justify-content:space-between"><div style="width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:{{ c.bg }};color:{{ c.fg }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.path }}"></path></svg></div><div style="font-size:11.5px;font-weight:600;color:rgba(21,22,27,.38);font-variant-numeric:tabular-nums">{{ c.pctTxt }}</div></div>
+<div style="min-width:0"><div style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div><div style="display:flex;align-items:baseline;gap:4px;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap"><span style="font-size:18px;font-weight:700;letter-spacing:-.025em">{{ c.amount }}</span><span style="font-size:11.5px;color:rgba(21,22,27,.4)">{{ c.of }}</span></div></div>
+<div style="height:5px;border-radius:999px;background:rgba(21,22,27,.07);overflow:hidden"><div style="height:100%;border-radius:999px;transition:width 220ms;width:{{ c.pct }};background:{{ c.barC }}"></div></div>
+<div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ c.subC }}">{{ c.sub }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.gastos }}">
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+<div style="padding:8px 4px 0"><div style="font-size:13px;font-weight:500;color:rgba(21,22,27,.5)">Setembro</div><div style="font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.1">Gastos</div></div>
+<div style="display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:999px;background:rgba(255,255,255,.62);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 6px 18px -10px rgba(22,24,40,.2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(21,22,27,.45)" stroke-width="2" stroke-linecap="round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg><input value="{{ gastos.query }}" onChange="{{ gastos.onQuery }}" placeholder="Buscar iFood, Uber, luz…" style="flex:1;border:none;outline:none;background:transparent;font-size:15px"></div>
+<div style="display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)"><sc-for list="{{ gastos.filters }}" as="f" hint-placeholder-count="4"><div onClick="{{ f.go }}" style="flex:1 1 auto;height:32px;padding:0 10px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;transition:background 220ms;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</div></sc-for></div>
+<div style="display:flex;justify-content:space-between;padding:2px 4px;font-size:13px;color:rgba(21,22,27,.5);font-variant-numeric:tabular-nums"><span>{{ gastos.count }}</span><span style="font-weight:600;color:#15161B">{{ gastos.sum }}</span></div>
+<sc-if value="{{ gastos.empty }}"><div style="padding:40px 10px;text-align:center;font-size:14px;color:rgba(21,22,27,.5)">Nada por aqui com esse filtro.</div></sc-if>
+<sc-for list="{{ gastos.groups }}" as="g" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;padding:4px 6px 0;font-size:13px;font-weight:600;color:rgba(21,22,27,.5)"><span>{{ g.label }}</span><span style="font-variant-numeric:tabular-nums">{{ g.total }}</span></div>
+<div style="border-radius:22px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ g.items }}" as="t">
+<div onClick="{{ t.toggle }}" style="display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;border-top:{{ t.sep }}">
+<div style="width:36px;height:36px;flex:none;border-radius:12px;display:grid;place-items:center;background:{{ t.bg }};color:{{ t.fg }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.desc }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.meta }}</div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.val }}</div><div style="font-size:11px;font-weight:600;color:{{ t.stC }}">{{ t.status }}</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ is.categoria }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:12px;padding:0 4px"><div style="width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:{{ catD.bg }};color:{{ catD.fg }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ catD.path }}"></path></svg></div><div style="font-size:30px;font-weight:700;letter-spacing:-.035em">{{ catD.name }}</div></div>
+<div style="display:flex;align-items:center;gap:20px;padding:20px;border-radius:30px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.52));backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 24px 50px -26px rgba(40,50,120,.3)">
+<div style="position:relative;width:128px;height:128px;flex:none"><svg width="128" height="128" viewBox="0 0 128 128" style="transform:rotate(-90deg)"><circle cx="64" cy="64" r="54" fill="none" stroke="rgba(21,22,27,.07)" stroke-width="12"></circle><circle cx="64" cy="64" r="54" fill="none" stroke="{{ catD.ringC }}" stroke-width="12" stroke-linecap="round" stroke-dasharray="{{ catD.dash }}"></circle></svg><div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><div style="font-size:28px;font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums">{{ catD.pct }}</div><div style="font-size:11px;color:rgba(21,22,27,.5)">usado</div></div></div></div>
+<div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div style="font-size:24px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums">{{ catD.spent }}</div><div style="font-size:13px;color:rgba(21,22,27,.5);font-variant-numeric:tabular-nums">{{ catD.budget }}</div><div style="font-size:14px;font-weight:600;margin-top:6px;color:{{ catD.leftC }}">{{ catD.left }}</div></div>
+</div>
+<div style="display:flex;gap:12px;padding:16px 18px;border-radius:24px;background:linear-gradient(140deg,oklch(.95 .04 262 / .85),rgba(255,255,255,.55));backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(.55 .21 262)" stroke-width="1.9" stroke-linejoin="round" style="flex:none;margin-top:1px"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>
+<div><div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:oklch(.5 .2 262)">Padrão</div><div style="font-size:15px;line-height:1.45;margin-top:4px;text-wrap:pretty">{{ catD.insight }}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)"><div style="font-size:12.5px;color:rgba(21,22,27,.5)">Ticket médio</div><div style="font-size:20px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ catD.ticket }}</div></div>
+<div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)"><div style="font-size:12.5px;color:rgba(21,22,27,.5)">Lançamentos</div><div style="font-size:20px;font-weight:700;letter-spacing:-.02em">{{ catD.n }}</div></div>
+</div>
+<div style="font-size:20px;font-weight:700;letter-spacing:-.025em;padding:6px 4px 0">Setembro</div>
+<div style="border-radius:22px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ catD.list }}" as="t">
+<div onClick="{{ t.toggle }}" style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;border-top:{{ t.sep }}">
+<div style="width:20px;height:20px;flex:none;border-radius:50%;display:grid;place-items:center;border:1.6px solid {{ t.chkBd }};background:{{ t.chkBg }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:{{ t.chkOp }}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">{{ t.desc }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ t.meta }}</div></div>
+<div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.val }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.cartoes }}">
+<div style="padding:52px 0 0;display:flex;flex-direction:column;gap:14px">
+<div style="padding:0 20px"><div style="font-size:30px;font-weight:700;letter-spacing:-.035em">Cartões</div><div style="font-size:13.5px;color:rgba(21,22,27,.5)">forma de pagamento, não categoria</div></div>
+<div style="display:flex;gap:12px;overflow-x:auto;padding:6px 16px 14px;scroll-snap-type:x mandatory">
+<sc-for list="{{ cardsV }}" as="c" hint-placeholder-count="6">
+<div onClick="{{ c.sel }}" style="flex:none;width:236px;height:148px;border-radius:22px;padding:16px 18px;color:#fff;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;scroll-snap-align:center;position:relative;overflow:hidden;transition:opacity 220ms,box-shadow 220ms;background:{{ c.grad }};box-shadow:{{ c.ring }};opacity:{{ c.op }}">
+<div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.28),rgba(255,255,255,0) 45%);pointer-events:none"></div>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative"><div style="font-size:16px;font-weight:700;letter-spacing:-.01em">{{ c.name }}</div><div style="font-size:11.5px;opacity:.8">{{ c.sub }}</div></div>
+<div style="position:relative"><div style="font-size:11.5px;opacity:.8">fatura aberta</div><div style="font-size:24px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums">{{ c.fat }}</div><div style="font-size:11.5px;opacity:.85;margin-top:2px">{{ c.dates }}</div></div>
+</div>
+</sc-for>
+</div>
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+<div style="padding:18px;border-radius:26px;display:flex;flex-direction:column;gap:12px;background:rgba(255,255,255,.66);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 14px 34px -20px rgba(22,24,40,.2)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:17px;font-weight:700">{{ cardD.name }}</div><div style="font-size:13px;font-weight:600;color:rgba(21,22,27,.55)">{{ cardD.pct }}</div></div>
+<div style="height:8px;border-radius:999px;background:rgba(21,22,27,.07);overflow:hidden"><div style="height:100%;border-radius:999px;transition:width 300ms;width:{{ cardD.w }};background:{{ cardD.barC }}"></div></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><div><div style="font-size:11.5px;color:rgba(21,22,27,.5)">Fecha</div><div style="font-size:15px;font-weight:600">{{ cardD.fecha }}</div></div><div><div style="font-size:11.5px;color:rgba(21,22,27,.5)">Vence</div><div style="font-size:15px;font-weight:600">{{ cardD.vence }}</div></div><div><div style="font-size:11.5px;color:rgba(21,22,27,.5)">Livre</div><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ cardD.livre }}</div></div></div>
+</div>
+<div style="display:flex;gap:12px;padding:16px 18px;border-radius:22px;background:linear-gradient(140deg,oklch(.96 .06 85 / .85),rgba(255,255,255,.5));border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(.55 .14 62)" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 8v5M12 16.5h.01"></path></svg>
+<div style="font-size:14px;line-height:1.45;text-wrap:pretty">Seus 6 cartões têm 4 vencimentos diferentes. Compra no Atacadão depois do dia 25 só cai na fatura seguinte — por isso na planilha o mês nunca batia.</div>
+</div>
+<div style="font-size:20px;font-weight:700;letter-spacing:-.025em;padding:6px 4px 0">Compras na fatura</div>
+<div style="border-radius:22px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff">
+<sc-if value="{{ cardD.hasBase }}"><div style="display:flex;align-items:center;gap:12px;padding:12px 16px"><div style="flex:1"><div style="font-size:15px;font-weight:600">Parcelas e meses anteriores</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">já estavam na fatura</div></div><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ cardD.base }}</div></div></sc-if>
+<sc-for list="{{ cardD.list }}" as="t">
+<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid rgba(21,22,27,.06)">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:{{ t.bg }};color:{{ t.fg }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">{{ t.desc }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ t.meta }}</div></div>
+<div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.val }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.dividas }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:14px">
+<div style="padding:0 4px;font-size:30px;font-weight:700;letter-spacing:-.035em">Dívidas</div>
+<div style="padding:22px;border-radius:30px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.52));backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 24px 50px -26px rgba(40,50,120,.3)">
+<div style="font-size:14px;font-weight:600;color:rgba(21,22,27,.6)">Total em aberto</div>
+<div style="font-size:42px;font-weight:700;letter-spacing:-.045em;font-variant-numeric:tabular-nums;line-height:1.05">{{ dividas.total }}</div>
+<div style="font-size:14px;color:rgba(21,22,27,.6)">Livre em <b style="color:#15161B">outubro de 2028</b> no ritmo atual.</div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:10px"><div style="flex:1;height:8px;border-radius:999px;background:rgba(21,22,27,.07);overflow:hidden"><div style="height:100%;border-radius:999px;background:oklch(.6 .15 45);width:{{ dividas.w }}"></div></div><div style="font-size:12.5px;color:rgba(21,22,27,.55);white-space:nowrap">{{ dividas.pctRenda }} da renda</div></div>
+</div>
+<sc-for list="{{ dividas.list }}" as="d" hint-placeholder-count="4">
+<div style="padding:16px 18px;border-radius:22px;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div><div style="font-size:16px;font-weight:700">{{ d.name }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ d.desc }}</div></div><div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ d.parc }}</div></div>
+<div style="height:6px;border-radius:999px;background:rgba(21,22,27,.07);overflow:hidden"><div style="height:100%;border-radius:999px;width:{{ d.w }};background:{{ d.c }}"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px;color:rgba(21,22,27,.5);font-variant-numeric:tabular-nums"><span>pago {{ d.pago }}</span><span style="font-weight:600;color:{{ d.restC }}">{{ d.rest }}</span></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ is.historico }}">
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:14px">
+<div style="padding:8px 4px 0"><div style="font-size:13px;font-weight:500;color:rgba(21,22,27,.5)">2026 · sobra por mês</div><div style="font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.1">Histórico</div></div>
+<div style="padding:18px 14px 14px;border-radius:28px;background:rgba(255,255,255,.66);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 18px 40px -24px rgba(22,24,40,.25)">
+<div style="display:flex;justify-content:space-between;padding:0 6px 14px;font-size:13px;color:rgba(21,22,27,.5)"><span>Acumulado no ano</span><span style="font-weight:700;color:#15161B;font-variant-numeric:tabular-nums">{{ hist.total }}</span></div>
+<div style="display:flex;gap:4px">
+<sc-for list="{{ hist.bars }}" as="b" hint-placeholder-count="9">
+<div onClick="{{ b.sel }}" style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer">
+<div style="height:108px;width:100%;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;border-radius:8px 8px 3px 3px;transition:height 300ms,background 220ms;height:{{ b.up }};background:{{ b.c }}"></div></div>
+<div style="height:1px;width:100%;background:rgba(21,22,27,.14)"></div>
+<div style="height:46px;width:100%;display:flex;align-items:flex-start;justify-content:center"><div style="width:70%;border-radius:3px 3px 8px 8px;transition:height 300ms;height:{{ b.down }};background:{{ b.c }}"></div></div>
+<div style="font-size:10.5px;font-weight:650;letter-spacing:.03em;color:{{ b.lc }}">{{ b.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="padding:18px;border-radius:26px;display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="font-size:18px;font-weight:700;letter-spacing:-.02em">{{ hist.title }}</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-variant-numeric:tabular-nums">
+<div><div style="font-size:12px;color:rgba(21,22,27,.5)">Entrou</div><div style="font-size:17px;font-weight:700;letter-spacing:-.02em">{{ hist.entrou }}</div></div>
+<div><div style="font-size:12px;color:rgba(21,22,27,.5)">Saiu</div><div style="font-size:17px;font-weight:700;letter-spacing:-.02em">{{ hist.saiu }}</div></div>
+<div><div style="font-size:12px;color:rgba(21,22,27,.5)">Sobrou</div><div style="font-size:17px;font-weight:700;letter-spacing:-.02em;color:{{ hist.sobraC }}">{{ hist.sobra }}</div></div>
+</div>
+<div style="height:1px;background:rgba(21,22,27,.07)"></div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(21,22,27,.45)">Maiores categorias</div>
+<sc-for list="{{ hist.top }}" as="t" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:{{ t.bg }};color:{{ t.fg }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.path }}"></path></svg></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">{{ t.name }}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{ t.v }}</span></div><div style="height:4px;border-radius:999px;background:rgba(21,22,27,.06)"><div style="height:100%;border-radius:999px;width:{{ t.w }};background:{{ t.fg }}"></div></div><div style="font-size:11.5px;color:rgba(21,22,27,.45)">{{ t.pct }}</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.piloto }}">
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:14px">
+<div style="padding:8px 4px 0"><div style="font-size:13px;font-weight:500;color:rgba(21,22,27,.5)">{{ pil.count }}</div><div style="font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.1">Piloto automático</div></div>
+<div style="position:relative">
+<div style="position:absolute;left:-10px;top:-20px;width:220px;height:180px;border-radius:50%;background:oklch(.7 .17 262);filter:blur(50px);opacity:.35;pointer-events:none"></div>
+<div style="position:relative;padding:22px;border-radius:30px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.5));backdrop-filter:blur(34px) saturate(190%);-webkit-backdrop-filter:blur(34px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 24px 50px -24px rgba(40,50,120,.32)">
+<div style="font-size:14px;font-weight:600;color:rgba(21,22,27,.6)">Pago sozinho em setembro</div>
+<div style="font-size:44px;font-weight:700;letter-spacing:-.045em;font-variant-numeric:tabular-nums;margin-top:4px">{{ pil.paid }}</div>
+<div style="font-size:13.5px;color:rgba(21,22,27,.55);margin-top:4px">{{ pil.next }}</div>
+</div>
+</div>
+<div style="padding:16px 18px;border-radius:24px;display:flex;flex-direction:column;gap:12px;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:rgba(21,22,27,.07)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg></div>
+<div style="flex:1"><div style="font-size:15px;font-weight:600">Trava de segurança</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">nada é pago abaixo deste saldo</div></div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+<div onClick="{{ pil.minus }}" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(21,22,27,.06)" style-active="background:rgba(21,22,27,.12)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"></path></svg></div>
+<div style="font-size:30px;font-weight:700;letter-spacing:-.035em;font-variant-numeric:tabular-nums">{{ pil.trava }}</div>
+<div onClick="{{ pil.plus }}" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(21,22,27,.06)" style-active="background:rgba(21,22,27,.12)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+</div>
+<div style="font-size:12.5px;font-weight:600;text-align:center;color:{{ pil.travaC }}">{{ pil.travaMsg }}</div>
+</div>
+<div style="font-size:20px;font-weight:700;letter-spacing:-.025em;padding:6px 4px 0">Contas</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ pil.bills }}" as="b" hint-placeholder-count="8">
+<div onClick="{{ b.tap }}" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:{{ b.sep }};cursor:{{ b.cursor }}">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:{{ b.bg }};color:{{ b.fg }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ b.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.name }}</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px"><span style="font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;color:{{ b.sc }};background:{{ b.sb }}">{{ b.st }}</span><span style="font-size:12px;color:rgba(21,22,27,.5);font-variant-numeric:tabular-nums">{{ b.val }}</span></div></div>
+<div onClick="{{ b.flip }}" style="width:46px;height:28px;flex:none;border-radius:999px;padding:2px;cursor:pointer;transition:background 220ms;background:{{ b.track }}"><div style="width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform 220ms cubic-bezier(.32,.72,0,1);transform:{{ b.knob }}"></div></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:12px;padding:0 6px;font-size:13px;line-height:1.45;color:rgba(21,22,27,.55);text-wrap:pretty"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="flex:none"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4h-1M9 15.5a4 4 0 0 0 6 0"></path></svg>Acima de R$ 1.000 eu peço Face ID antes de mandar. Abaixo disso, pago e te aviso.</div>
+<div style="padding:16px;border-radius:20px;border:1.5px dashed rgba(21,22,27,.2);display:flex;flex-direction:column;gap:8px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(21,22,27,.5)">A fazer — sua API</div>
+<div style="font:500 12px/1.6 'Geist Mono',ui-monospace,monospace;white-space:pre-wrap;color:#15161B">POST /pagamentos
+{ tipo: "pix" | "boleto", valor,
+  destino, data, exigeAprovacao }</div>
+<div style="font-size:12.5px;line-height:1.45;color:rgba(21,22,27,.55)">O app só chama o endpoint e mostra o status. Face ID guarda a chave — nenhuma senha fica no aparelho.</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.planejar }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:14px">
+<div style="padding:0 4px"><div style="font-size:30px;font-weight:700;letter-spacing:-.035em">Planejar {{ plan.month }}</div><div style="font-size:13.5px;color:rgba(21,22,27,.5)">fixas já copiadas · ajuste o resto</div></div>
+<div style="padding:22px;border-radius:30px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.52));backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 24px 50px -26px rgba(40,50,120,.3)">
+<div style="font-size:14px;font-weight:600;color:rgba(21,22,27,.6)">Sobra projetada</div>
+<div style="font-size:44px;font-weight:700;letter-spacing:-.045em;font-variant-numeric:tabular-nums;margin-top:4px;transition:color 220ms;color:{{ plan.sobraC }}">{{ plan.sobra }}</div>
+<div style="font-size:13.5px;color:rgba(21,22,27,.55);margin-top:4px">dá pra guardar <b style="color:#15161B">{{ plan.guardar }}</b> · planejado {{ plan.total }}</div>
+</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ plan.rows }}" as="r" hint-placeholder-count="11">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px 10px 14px;border-top:{{ r.sep }}">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:{{ r.bg }};color:{{ r.fg }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ r.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div><div style="font-size:12px;color:{{ r.oc }}">{{ r.origin }}</div></div>
+<div style="display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(21,22,27,.05)">
+<div onClick="{{ r.minus }}" style="width:30px;height:30px;border-radius:999px;display:grid;place-items:center;cursor:pointer" style-active="background:#fff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14"></path></svg></div>
+<div style="min-width:66px;text-align:center;font-size:13.5px;font-weight:650;font-variant-numeric:tabular-nums">{{ r.v }}</div>
+<div onClick="{{ r.plus }}" style="width:30px;height:30px;border-radius:999px;display:grid;place-items:center;cursor:pointer" style-active="background:#fff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+</div>
+</div>
+</sc-for>
+<sc-for list="{{ plan.extras }}" as="e">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px 10px 14px;border-top:1px solid rgba(21,22,27,.06)">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:rgba(21,22,27,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600">{{ e.name }}</div><div style="font-size:12px;color:rgba(21,22,27,.45)">só deste mês</div></div>
+<div style="display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(21,22,27,.05)"><div onClick="{{ e.minus }}" style="width:30px;height:30px;border-radius:999px;display:grid;place-items:center;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14"></path></svg></div><div style="min-width:66px;text-align:center;font-size:13.5px;font-weight:650;font-variant-numeric:tabular-nums">{{ e.v }}</div><div onClick="{{ e.plus }}" style="width:30px;height:30px;border-radius:999px;display:grid;place-items:center;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+</div>
+</sc-for>
+</div>
+<div onClick="{{ plan.toggleExtras }}" style="height:50px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:15px;font-weight:600;color:oklch(.5 .2 262);border:1.5px dashed oklch(.55 .21 262 / .4)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Item só deste mês</div>
+<sc-if value="{{ plan.showExtras }}"><div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ plan.presets }}" as="p"><div onClick="{{ p.go }}" style="height:36px;padding:0 14px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:13.5px;font-weight:600;background:rgba(255,255,255,.7);border:1px solid rgba(21,22,27,.08)">{{ p.label }}</div></sc-for></div></sc-if>
+<div style="font-size:12.5px;color:rgba(21,22,27,.45);text-align:center;padding:0 20px">Sem limite de linhas. Adicionar item é só adicionar.</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.fixas }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:14px">
+<div style="padding:0 4px"><div style="font-size:30px;font-weight:700;letter-spacing:-.035em">Contas fixas</div><div style="font-size:13.5px;color:rgba(21,22,27,.5);font-variant-numeric:tabular-nums">{{ fixas.total }}</div></div>
+<div style="padding:18px;border-radius:26px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.52));backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 20px 44px -26px rgba(40,50,120,.3)">
+<div style="display:flex;gap:12px"><div style="width:26px;height:26px;flex:none;border-radius:50%;background:#15161B;color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center">1</div><div><div style="font-size:15px;font-weight:650">Cadastra uma vez</div><div style="font-size:13px;color:rgba(21,22,27,.55)">nome, valor, categoria e dia do vencimento</div></div></div>
+<div style="display:flex;gap:12px"><div style="width:26px;height:26px;flex:none;border-radius:50%;background:#15161B;color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center">2</div><div><div style="font-size:15px;font-weight:650">Todo dia 1 o mês novo já nasce com ela</div><div style="font-size:13px;color:rgba(21,22,27,.55)">nada de recriar linha</div></div></div>
+<div style="display:flex;gap:12px"><div style="width:26px;height:26px;flex:none;border-radius:50%;background:oklch(.55 .21 262);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center">3</div><div><div style="font-size:15px;font-weight:650">Se quiser, ela se paga</div><div style="font-size:13px;color:rgba(21,22,27,.55)">ligando o piloto, sai sozinha no vencimento</div></div></div>
+</div>
+<div onClick="{{ fixas.novo }}" style="height:50px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:15.5px;font-weight:600;color:#fff;background:#15161B;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 22px -10px rgba(0,0,0,.5)" style-active="transform:scale(.98)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nova conta fixa</div>
+<div style="padding:6px 6px 0;font-size:13px;font-weight:600;color:rgba(21,22,27,.5)">Valor sempre igual · renova igual</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ fixas.fixed }}" as="b" hint-placeholder-count="8">
+<div onClick="{{ b.edit }}" style="display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;border-top:{{ b.sep }}">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:{{ b.bg }};color:{{ b.fg }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ b.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.name }}</div><div style="font-size:12px;color:rgba(21,22,27,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.meta }}</div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div style="font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums">{{ b.val }}</div><div style="font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;color:{{ b.bc }};background:{{ b.bb }}">{{ b.badge }}</div></div>
+</div>
+</sc-for>
+</div>
+<div style="padding:6px 6px 0;font-size:13px;font-weight:600;color:rgba(21,22,27,.5)">Valor muda todo mês · média dos 3 últimos</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ fixas.vari }}" as="b" hint-placeholder-count="3">
+<div onClick="{{ b.edit }}" style="display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;border-top:{{ b.sep }}">
+<div style="width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:{{ b.bg }};color:{{ b.fg }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ b.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600">{{ b.name }}</div><div style="font-size:12px;color:rgba(21,22,27,.5)">{{ b.meta }}</div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div style="font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums">{{ b.val }}</div><div style="font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;color:{{ b.bc }};background:{{ b.bb }}">{{ b.badge }}</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.fixaEdit }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:14px">
+<div style="padding:0 4px;font-size:30px;font-weight:700;letter-spacing:-.035em">{{ draft.title }}</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.66);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="display:flex;align-items:center;gap:12px;padding:0 16px;height:52px"><div style="width:76px;font-size:14px;color:rgba(21,22,27,.55)">Nome</div><input value="{{ draft.name }}" onChange="{{ draft.onName }}" placeholder="Aluguel, Luz, Mesada…" style="flex:1;border:none;outline:none;background:transparent;font-size:15.5px;font-weight:600"></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 16px;height:52px;border-top:1px solid rgba(21,22,27,.06)"><div style="width:76px;font-size:14px;color:rgba(21,22,27,.55)">Valor</div><span style="font-size:15.5px;font-weight:600;color:rgba(21,22,27,.4)">R$</span><input value="{{ draft.value }}" onChange="{{ draft.onValue }}" placeholder="0,00" inputmode="decimal" style="flex:1;border:none;outline:none;background:transparent;font-size:15.5px;font-weight:600;font-variant-numeric:tabular-nums"></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 10px 0 16px;height:52px;border-top:1px solid rgba(21,22,27,.06)"><div style="flex:1;font-size:14px;color:rgba(21,22,27,.55)">Vence</div>
+<div style="display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(21,22,27,.05)"><div onClick="{{ draft.dueMinus }}" style="width:30px;height:30px;border-radius:999px;display:grid;place-items:center;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14"></path></svg></div><div style="min-width:58px;text-align:center;font-size:14px;font-weight:650">{{ draft.dueTxt }}</div><div onClick="{{ draft.duePlus }}" style="width:30px;height:30px;border-radius:999px;display:grid;place-items:center;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+</div>
+</div>
+<div style="padding:0 6px;font-size:13px;font-weight:600;color:rgba(21,22,27,.5)">Categoria</div>
+<div style="display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px"><sc-for list="{{ draft.cats }}" as="c" hint-placeholder-count="6"><div onClick="{{ c.go }}" style="flex:none;height:38px;padding:0 14px 0 8px;border-radius:999px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13.5px;font-weight:600;white-space:nowrap;transition:background 220ms;background:{{ c.bg }};border:1px solid {{ c.bd }}"><div style="width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:{{ c.fg }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.path }}"></path></svg></div>{{ c.name }}</div></sc-for></div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.66);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px"><div style="flex:1"><div style="font-size:15px;font-weight:600">O valor muda todo mês</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">estimo pela média dos 3 últimos meses</div></div><div onClick="{{ draft.flipVar }}" style="width:46px;height:28px;flex:none;border-radius:999px;padding:2px;cursor:pointer;transition:background 220ms;background:{{ draft.varT.track }}"><div style="width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform 220ms cubic-bezier(.32,.72,0,1);transform:{{ draft.varT.knob }}"></div></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid rgba(21,22,27,.06)"><div style="flex:1"><div style="font-size:15px;font-weight:600">Pagar sozinho</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">entra no piloto automático</div></div><div onClick="{{ draft.flipAuto }}" style="width:46px;height:28px;flex:none;border-radius:999px;padding:2px;cursor:pointer;transition:background 220ms;background:{{ draft.autoT.track }}"><div style="width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform 220ms cubic-bezier(.32,.72,0,1);transform:{{ draft.autoT.knob }}"></div></div></div>
+<sc-if value="{{ draft.showAuto }}">
+<div style="padding:10px 16px 14px;border-top:1px solid rgba(21,22,27,.06);display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(120,120,128,.14)"><sc-for list="{{ draft.methods }}" as="m"><div onClick="{{ m.go }}" style="flex:1;height:32px;border-radius:9px;display:grid;place-items:center;cursor:pointer;font-size:13.5px;font-weight:600;transition:background 220ms;background:{{ m.bg }};box-shadow:{{ m.sh }}">{{ m.label }}</div></sc-for></div>
+<sc-if value="{{ draft.showPix }}"><div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 12px;border-radius:12px;background:rgba(21,22,27,.05)"><span style="font-size:13px;color:rgba(21,22,27,.5)">Chave Pix</span><input value="{{ draft.pix }}" onChange="{{ draft.onPix }}" placeholder="e-mail, CPF ou telefone" style="flex:1;border:none;outline:none;background:transparent;font-size:14.5px;font-weight:500"></div></sc-if>
+</div>
+</sc-if>
+</div>
+<div style="display:flex;gap:12px;padding:0 6px;font-size:13px;line-height:1.45;color:rgba(21,22,27,.55);text-wrap:pretty"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="flex:none"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4h-1M9 15.5a4 4 0 0 0 6 0"></path></svg>Acima de R$ 1.000 eu peço Face ID antes de mandar. Abaixo disso, pago e te aviso.</div>
+<div onClick="{{ draft.save }}" style="height:52px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:16px;font-weight:600;color:#fff;background:linear-gradient(180deg,oklch(.62 .2 262),oklch(.51 .22 264));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 24px -10px oklch(.5 .22 262 / .6)" style-active="transform:scale(.98)">Salvar</div>
+<sc-if value="{{ draft.isEdit }}"><div onClick="{{ draft.del }}" style="height:46px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:15px;font-weight:600;color:oklch(.57 .2 25)">Apagar conta fixa</div></sc-if>
+<div style="font-size:12.5px;color:rgba(21,22,27,.45);text-align:center;padding:0 24px;text-wrap:pretty">Alterações valem de outubro em diante. Meses fechados ficam como estão.</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.metas }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:14px">
+<div style="padding:0 4px;font-size:30px;font-weight:700;letter-spacing:-.035em">Metas e reservas</div>
+<div style="padding:24px 20px;border-radius:30px;display:flex;flex-direction:column;align-items:center;gap:14px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.52));backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 24px 50px -26px rgba(40,50,120,.3)">
+<div style="position:relative;width:168px;height:168px"><svg width="168" height="168" viewBox="0 0 168 168" style="transform:rotate(-90deg)"><circle cx="84" cy="84" r="70" fill="none" stroke="rgba(21,22,27,.07)" stroke-width="14"></circle><circle cx="84" cy="84" r="70" fill="none" stroke="oklch(.56 .14 155)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ metas.dash }}"></circle></svg><div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><div style="font-size:46px;font-weight:700;letter-spacing:-.05em;line-height:1">{{ metas.months }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.55);margin-top:4px">meses de reserva</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;font-variant-numeric:tabular-nums">
+<div style="text-align:center"><div style="font-size:12px;color:rgba(21,22,27,.5)">Custo fixo mensal</div><div style="font-size:17px;font-weight:700">{{ metas.fixo }}</div></div>
+<div style="text-align:center"><div style="font-size:12px;color:rgba(21,22,27,.5)">Falta para 6 meses</div><div style="font-size:17px;font-weight:700">{{ metas.falta }}</div></div>
+</div>
+</div>
+<sc-for list="{{ metas.goals }}" as="g" hint-placeholder-count="3">
+<div style="padding:16px 18px;border-radius:22px;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div><div style="font-size:16px;font-weight:700">{{ g.name }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ g.desc }}</div></div><div style="font-size:14px;font-weight:700;color:rgba(21,22,27,.5)">{{ g.pct }}</div></div>
+<div style="height:6px;border-radius:999px;background:rgba(21,22,27,.07);overflow:hidden"><div style="height:100%;border-radius:999px;width:{{ g.w }};background:{{ g.c }}"></div></div>
+<div style="font-size:13px;font-variant-numeric:tabular-nums"><b>{{ g.v }}</b> <span style="color:rgba(21,22,27,.5)">{{ g.t }}</span></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ is.mais }}">
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:14px">
+<div style="padding:8px 4px 0;font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.1">Mais</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ mais }}" as="m" hint-placeholder-count="7">
+<div onClick="{{ m.go }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-top:{{ m.sep }}" style-active="background:rgba(21,22,27,.04)">
+<div style="width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:{{ m.bg }};color:{{ m.fg }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ m.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:600">{{ m.label }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5);font-variant-numeric:tabular-nums">{{ m.sub }}</div></div>
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(21,22,27,.3)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ is.ajustes }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:10px">
+<div style="padding:0 4px 4px;font-size:30px;font-weight:700;letter-spacing:-.035em">Ajustes</div>
+<sc-for list="{{ ajustes }}" as="g" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px">
+<div style="padding:4px 6px 0;font-size:13px;font-weight:600;color:rgba(21,22,27,.5)">{{ g.title }}</div>
+<div style="border-radius:22px;overflow:hidden;background:rgba(255,255,255,.6);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.16)">
+<sc-for list="{{ g.rows }}" as="r">
+<div onClick="{{ r.go }}" style="display:flex;align-items:center;gap:12px;min-height:50px;padding:9px 14px;cursor:pointer;border-top:{{ r.sep }}">
+<div style="width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(21,22,27,.06)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ r.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:500">{{ r.label }}</div><sc-if value="{{ r.hasSub }}"><div style="font-size:12px;color:rgba(21,22,27,.5)">{{ r.sub }}</div></sc-if></div>
+<sc-if value="{{ r.isChev }}"><div style="display:flex;align-items:center;gap:6px;font-size:14px;color:rgba(21,22,27,.45)">{{ r.note }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(21,22,27,.3)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div></sc-if>
+<sc-if value="{{ r.isSoon }}"><div style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:rgba(21,22,27,.55);background:rgba(21,22,27,.07)">em breve · Pluggy</div></sc-if>
+<sc-if value="{{ r.isToggle }}"><div onClick="{{ r.t.flip }}" style="width:46px;height:28px;flex:none;border-radius:999px;padding:2px;cursor:pointer;transition:background 220ms;background:{{ r.t.track }}"><div style="width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform 220ms cubic-bezier(.32,.72,0,1);transform:{{ r.t.knob }}"></div></div></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ is.recibos }}">
+<div style="padding:52px 16px 0;display:flex;flex-direction:column;gap:12px">
+<div style="padding:0 4px"><div style="font-size:30px;font-weight:700;letter-spacing:-.035em">Recibos</div><div style="font-size:13.5px;color:rgba(21,22,27,.5)">chegaram pelo compartilhar e pelo scan</div></div>
+<sc-for list="{{ recibos }}" as="r" hint-placeholder-count="3">
+<div style="padding:16px;border-radius:24px;display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.62);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:40px;height:40px;flex:none;border-radius:13px;display:grid;place-items:center;background:{{ r.bg }};color:{{ r.fg }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ r.path }}"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:650">{{ r.merchant }}</div><div style="font-size:12.5px;color:rgba(21,22,27,.5)">{{ r.origin }}</div></div>
+<div style="font-size:18px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ r.val }}</div>
+</div>
+<sc-if value="{{ r.pending }}">
+<div style="display:flex;gap:8px">
+<div onClick="{{ r.confirm }}" style="flex:1;height:42px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:14px;font-weight:600;color:#fff;background:#15161B;white-space:nowrap;padding:0 12px">Confirmar em {{ r.catName }}</div>
+<div onClick="{{ r.edit }}" style="height:42px;padding:0 18px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:14px;font-weight:600;background:rgba(21,22,27,.07)">Editar</div>
+</div>
+</sc-if>
+<sc-if value="{{ r.saved }}"><div style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:oklch(.56 .14 155)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Salvo em {{ r.catName }}</div></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+<div style="position:absolute;left:0;right:0;top:0;height:96px;z-index:15;pointer-events:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:linear-gradient(rgba(243,243,241,.85),rgba(243,243,241,0));mask-image:linear-gradient(#000 45%,transparent);-webkit-mask-image:linear-gradient(#000 45%,transparent)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:130px;z-index:15;pointer-events:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:linear-gradient(rgba(243,243,241,0),rgba(243,243,241,.8));mask-image:linear-gradient(transparent,#000 60%);-webkit-mask-image:linear-gradient(transparent,#000 60%)"></div>
+<div style="position:absolute;left:0;right:0;top:0;height:54px;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:4px 34px 0 50px;pointer-events:none;color:{{ statusFg }}">
+<div style="font-size:17px;font-weight:600;letter-spacing:-.01em">9:41</div>
+<div style="position:absolute;left:50%;top:11px;width:124px;height:36px;margin-left:-62px;border-radius:20px;background:#000"></div>
+<div style="display:flex;align-items:center;gap:6px">
+<div style="display:flex;align-items:flex-end;gap:2px;height:11px"><div style="width:3px;height:4px;border-radius:1px;background:currentColor"></div><div style="width:3px;height:6px;border-radius:1px;background:currentColor"></div><div style="width:3px;height:8.5px;border-radius:1px;background:currentColor"></div><div style="width:3px;height:11px;border-radius:1px;background:currentColor"></div></div>
+<div style="width:25px;height:12px;border-radius:4px;border:1.2px solid currentColor;padding:1.5px;opacity:.95"><div style="width:75%;height:100%;border-radius:2px;background:currentColor"></div></div>
+</div>
+</div>
+<sc-if value="{{ pushed }}">
+<div onClick="{{ back }}" style="position:absolute;top:56px;left:16px;z-index:22;width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(255,255,255,.62);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 6px 18px -6px rgba(22,24,40,.2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+</sc-if>
+<div style="position:absolute;left:16px;right:92px;bottom:28px;height:64px;z-index:20;border-radius:999px;display:flex;padding:5px;background:rgba(255,255,255,.6);backdrop-filter:blur(24px) saturate(190%);-webkit-backdrop-filter:blur(24px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.5),0 14px 34px -10px rgba(22,24,40,.22)">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+<div onClick="{{ t.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:999px;cursor:pointer;transition:background 220ms;background:{{ t.bg }};color:{{ t.fg }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.path }}"></path></svg>
+<div style="font-size:10px;font-weight:600;letter-spacing:.01em">{{ t.label }}</div>
+</div>
+</sc-for>
+</div>
+<div onClick="{{ openSheet }}" style="position:absolute;right:16px;bottom:28px;width:64px;height:64px;z-index:20;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:#fff;background:linear-gradient(180deg,oklch(.63 .2 262),oklch(.5 .22 264));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 6px rgba(0,0,40,.2),0 12px 26px -8px oklch(.5 .22 262 / .6)" style-active="transform:scale(.94)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:30;background:rgba(18,20,30,.22);transition:opacity 300ms;opacity:{{ sheetO }};pointer-events:{{ sheetPE }}"></div>
+<div style="position:absolute;left:8px;right:8px;bottom:8px;z-index:31;border-radius:44px;padding:10px 16px 18px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.74));backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 -10px 50px -10px rgba(22,24,40,.3);transition:transform 480ms cubic-bezier(.32,.72,0,1);transform:{{ sheetT }}">
+<div style="width:38px;height:5px;border-radius:999px;background:rgba(21,22,27,.18);margin:0 auto"></div>
+<div style="display:flex;align-items:center;justify-content:space-between">
+<div onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(21,22,27,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></div>
+<div style="font-size:16px;font-weight:650">{{ lan.title }}</div>
+<div onClick="{{ openScan }}" style="width:40px;height:40px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(21,22,27,.06)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8"></path></svg></div>
+</div>
+<div style="display:flex;align-items:baseline;justify-content:center;gap:6px;padding:4px 0 2px;font-variant-numeric:tabular-nums;color:{{ lan.amtC }}"><span style="font-size:24px;font-weight:600">R$</span><span style="font-size:56px;font-weight:700;letter-spacing:-.05em;line-height:1">{{ lan.amt }}</span></div>
+<div style="text-align:center;font-size:12.5px;color:rgba(21,22,27,.45);margin-top:-6px">hoje, 21 de setembro</div>
+<div style="display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:0 16px"><sc-for list="{{ lan.cats }}" as="c" hint-placeholder-count="6"><div onClick="{{ c.go }}" style="flex:none;height:36px;padding:0 12px 0 6px;border-radius:999px;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;transition:background 220ms;background:{{ c.bg }};border:1px solid {{ c.bd }}"><div style="width:24px;height:24px;display:grid;place-items:center;color:{{ c.fg }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.path }}"></path></svg></div>{{ c.name }}</div></sc-for></div>
+<div style="display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:0 16px"><sc-for list="{{ lan.cards }}" as="c" hint-placeholder-count="7"><div onClick="{{ c.go }}" style="flex:none;height:32px;padding:0 12px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:12.5px;font-weight:600;white-space:nowrap;transition:background 220ms;background:{{ c.bg }};color:{{ c.fg }};border:1px solid {{ c.bd }}">{{ c.name }}</div></sc-for></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
+<sc-for list="{{ lan.keys }}" as="k" hint-placeholder-count="12">
+<div onClick="{{ k.press }}" style="height:50px;border-radius:16px;display:grid;place-items:center;cursor:pointer;font-size:25px;font-weight:500;user-select:none;transition:background 120ms" style-active="background:rgba(21,22,27,.09)">
+<sc-if value="{{ k.notDel }}">{{ k.k }}</sc-if>
+<sc-if value="{{ k.isDel }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7zM12 9.5l5 5M17 9.5l-5 5"></path></svg></sc-if>
+</div>
+</sc-for>
+</div>
+<div onClick="{{ lan.save }}" style="height:54px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:16.5px;font-weight:600;color:#fff;transition:opacity 220ms;background:linear-gradient(180deg,oklch(.62 .2 262),oklch(.51 .22 264));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 24px -10px oklch(.5 .22 262 / .6);opacity:{{ lan.saveOp }}" style-active="transform:scale(.98)">{{ lan.saveLabel }}</div>
+<div style="display:flex;justify-content:center;gap:22px;font-size:13.5px;font-weight:600;color:oklch(.5 .2 262)">
+<div onClick="{{ openScan }}" style="display:flex;align-items:center;gap:6px;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8"></path></svg>Escanear cupom</div>
+<div onClick="{{ sheetRecibos }}" style="display:flex;align-items:center;gap:6px;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"></path></svg>Recibo compartilhado</div>
+</div>
+</div>
+<div style="position:absolute;inset:0;z-index:50;display:grid;place-items:center;background:rgba(18,20,30,.28);transition:opacity 220ms;opacity:{{ alertO }};pointer-events:{{ alertPE }}">
+<div style="width:300px;border-radius:34px;padding:24px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:rgba(255,255,255,.82);backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 30px 60px -20px rgba(0,0,0,.35);transition:transform 320ms cubic-bezier(.32,.72,0,1);transform:{{ alertS }}">
+<div style="width:58px;height:58px;border-radius:18px;display:grid;place-items:center;color:oklch(.55 .21 262);background:oklch(.55 .21 262 / .1);margin-bottom:6px"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4h-1M9 15.5a4 4 0 0 0 6 0"></path></svg></div>
+<div style="font-size:17px;font-weight:700;letter-spacing:-.01em">{{ alert.title }}</div>
+<div style="font-size:13.5px;line-height:1.4;color:rgba(21,22,27,.6)">{{ alert.body }}</div>
+<sc-if value="{{ alert.asking }}"><div style="display:flex;gap:8px;width:100%;margin-top:12px"><div onClick="{{ alertCancel }}" style="flex:1;height:46px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:15px;font-weight:600;background:rgba(21,22,27,.07)">Agora não</div><div onClick="{{ authorize }}" style="flex:1;height:46px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:15px;font-weight:600;color:#fff;background:oklch(.55 .21 262)">Autorizar</div></div></sc-if>
+<sc-if value="{{ alert.scanning }}"><div style="height:46px;margin-top:12px;display:grid;place-items:center;font-size:14px;font-weight:600;color:oklch(.55 .21 262)">Verificando Face ID…</div></sc-if>
+</div>
+</div>
+<div style="position:absolute;top:58px;left:50%;z-index:55;transform:translateX(-50%);pointer-events:none">
+<div style="display:flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border-radius:999px;white-space:nowrap;font-size:14px;font-weight:600;background:rgba(255,255,255,.8);backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 14px 30px -12px rgba(22,24,40,.3);transition:opacity 260ms,transform 360ms cubic-bezier(.32,.72,0,1);opacity:{{ toastO }};transform:{{ toastT }}"><div style="width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:oklch(.56 .14 155);color:#fff"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>{{ toastMsg }}</div>
+</div>
+<sc-if value="{{ scanOpen }}">
+<div style="position:absolute;inset:0;z-index:40;background:#0B0C0F;color:#fff;overflow:hidden">
+<div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#15171c 0 14px,#111317 14px 28px)"></div>
+<div style="position:absolute;left:50%;top:150px;width:220px;height:330px;margin-left:-110px;border-radius:6px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.1) 0 2px,transparent 2px 16px),rgba(235,232,224,.16);display:grid;place-items:center"><div style="font:500 11px 'Geist Mono',ui-monospace,monospace;color:rgba(255,255,255,.55)">câmera ao vivo · cupom</div></div>
+<div style="position:absolute;left:50%;top:130px;width:260px;height:370px;margin-left:-130px">
+<div style="position:absolute;left:0;top:0;width:36px;height:36px;border-left:4px solid #fff;border-top:4px solid #fff;border-radius:14px 0 0 0"></div>
+<div style="position:absolute;right:0;top:0;width:36px;height:36px;border-right:4px solid #fff;border-top:4px solid #fff;border-radius:0 14px 0 0"></div>
+<div style="position:absolute;left:0;bottom:0;width:36px;height:36px;border-left:4px solid #fff;border-bottom:4px solid #fff;border-radius:0 0 0 14px"></div>
+<div style="position:absolute;right:0;bottom:0;width:36px;height:36px;border-right:4px solid #fff;border-bottom:4px solid #fff;border-radius:0 0 14px 0"></div>
+</div>
+<div style="position:absolute;top:58px;left:16px;right:16px;display:flex;align-items:center;justify-content:space-between">
+<div onClick="{{ closeScan }}" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:rgba(255,255,255,.14);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.2)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></div>
+<div style="font-size:16px;font-weight:650">Escanear cupom</div>
+<div style="width:44px;height:44px"></div>
+</div>
+<div style="position:absolute;top:452px;left:50%;transform:translateX(-50%);height:38px;padding:0 16px;border-radius:999px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;white-space:nowrap;background:oklch(.62 .15 155);box-shadow:0 10px 24px -8px oklch(.5 .15 155 / .7)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>R$ 23,80 detectado</div>
+<div style="position:absolute;left:8px;right:8px;bottom:8px;border-radius:44px;padding:22px 20px 26px;display:flex;flex-direction:column;gap:14px;color:#15161B;background:rgba(255,255,255,.86);backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);border:1px solid rgba(255,255,255,.95)">
+<div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:oklch(.6 .15 75 / .16);color:oklch(.54 .15 75)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3v3M12 3v3"></path></svg></div><div style="flex:1"><div style="font-size:17px;font-weight:700">Padaria Real</div><div style="font-size:13px;color:rgba(21,22,27,.55)">hoje · 08:42 · Débito</div></div><div style="font-size:20px;font-weight:700;letter-spacing:-.02em">R$ 23,80</div></div>
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(21,22,27,.55)">Categoria sugerida<span style="height:28px;padding:0 12px;border-radius:999px;display:grid;place-items:center;font-weight:600;color:#15161B;background:oklch(.6 .15 75 / .18)">Rango &amp; Café</span></div>
+<div onClick="{{ saveScan }}" style="height:54px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:16.5px;font-weight:600;color:#fff;background:linear-gradient(180deg,oklch(.62 .2 262),oklch(.51 .22 264));box-shadow:inset 0 1px 0 rgba(255,255,255,.4)">Salvar gasto</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ obOpen }}">
+<div style="position:absolute;inset:0;z-index:45;background:#F3F3F1;overflow-y:auto;padding:84px 20px 40px">
+<div style="position:absolute;width:420px;height:420px;right:-200px;top:-140px;border-radius:50%;background:oklch(.86 .1 150);filter:blur(80px);opacity:.6;pointer-events:none"></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:18px">
+<div style="width:64px;height:64px;border-radius:20px;display:grid;place-items:center;color:#fff;background:linear-gradient(160deg,oklch(.62 .15 150),oklch(.48 .14 160));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 14px 30px -12px oklch(.45 .14 155 / .6)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM4 10h16M4 15h16M10 5v14"></path></svg></div>
+<div><div style="font-size:34px;font-weight:700;letter-spacing:-.04em;line-height:1.1">Achei sua planilha.</div><div style="font-size:15px;color:rgba(21,22,27,.55);margin-top:6px">Orçamento 2026 · 42 abas</div></div>
+<div style="font-size:15px;line-height:1.5;color:rgba(21,22,27,.7);text-wrap:pretty">Você escolheu começar limpo, então trago só o que se repete. O histórico fica na planilha.</div>
+<div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.66);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 12px 30px -18px rgba(22,24,40,.18)">
+<sc-for list="{{ obRows }}" as="r" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:1fr 20px 1.2fr;align-items:center;gap:8px;padding:12px 16px;border-top:{{ r.sep }}"><div style="font:500 12px 'Geist Mono',ui-monospace,monospace;color:rgba(21,22,27,.55)">{{ r.a }}</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(21,22,27,.35)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><div style="font-size:14.5px;font-weight:600">{{ r.b }}</div></div>
+</sc-for>
+</div>
+<div onClick="{{ obImport }}" style="height:54px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:16.5px;font-weight:600;color:#fff;background:#15161B;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 12px 24px -10px rgba(0,0,0,.5);margin-top:4px">Trazer as 18 contas fixas</div>
+<div onClick="{{ obZero }}" style="height:50px;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:15.5px;font-weight:600;color:#15161B;background:rgba(255,255,255,.6);border:1px solid rgba(21,22,27,.08)">Começar 100% do zero</div>
+</div>
+</div>
+</sc-if>
+<div style="position:absolute;left:50%;bottom:8px;width:140px;height:5px;margin-left:-70px;border-radius:999px;z-index:70;background:{{ statusFg }};pointer-events:none"></div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Hoje&quot;,&quot;Lançar gasto&quot;,&quot;Planejar&quot;,&quot;Cartões&quot;,&quot;Piloto&quot;,&quot;Onboarding&quot;],&quot;default&quot;:&quot;Hoje&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showIndex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const ACC='oklch(.55 .21 262)',GREEN='oklch(.56 .14 155)',RED='oklch(.57 .2 25)',AMBER='oklch(.64 .15 62)',INK='#15161B';
+const col=(h,a)=>a?`oklch(.6 .15 ${h} / ${a})`:`oklch(.54 .15 ${h})`;
+const CATS=[
+{id:'moradia',name:'Moradia',hue:265,nature:'fixo',budget:4522.33,origin:'repete todo mês',icon:'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z'},
+{id:'mercado',name:'Mercado',hue:160,nature:'variavel',budget:800,origin:'média dos 3 meses',icon:'M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L20 8H6.2M9 20.5h.01M18 20.5h.01'},
+{id:'rango',name:'Rango & Café',hue:75,nature:'variavel',budget:600,origin:'média dos 3 meses',icon:'M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3v3M12 3v3'},
+{id:'transporte',name:'Transporte',hue:225,nature:'variavel',budget:400,origin:'média dos 3 meses',icon:'M5 16v-5l2-5h10l2 5v5M3 16h18v3H3zM5 11h14M7 19v1.5M17 19v1.5'},
+{id:'saude',name:'Saúde',hue:20,nature:'fixo',budget:1200,origin:'repete todo mês',icon:'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'},
+{id:'mesadas',name:'Mesadas',hue:320,nature:'fixo',budget:1700,origin:'repete todo mês',icon:'M3 8h18v4H3zM5 12v8h14v-8M12 8v12M12 8S10.5 4 8 4a2 2 0 0 0 0 4M12 8s1.5-4 4-4a2 2 0 0 1 0 4'},
+{id:'igreja',name:'Igreja & Ofertas',hue:290,nature:'fixo',budget:3200,origin:'repete todo mês',icon:'M12 2v4M10 4h4M6 21V11l6-5 6 5v10M4 21h16M10 21v-4a2 2 0 0 1 4 0v4'},
+{id:'familia',name:'Família',hue:195,nature:'fixo',budget:2090,origin:'repete todo mês',icon:'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14a6 6 0 0 1 3.5 6'},
+{id:'lazer',name:'Lazer & Assinaturas',hue:345,nature:'fixo',budget:480,origin:'repete todo mês',icon:'M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0M20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0'},
+{id:'dividas',name:'Dívidas',hue:45,nature:'parcelado',budget:6110,origin:'3 parcelas ativas',icon:'M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6'},
+{id:'imprevistos',name:'Imprevistos',hue:120,nature:'reserva',budget:300,origin:'reserva fixa',icon:'M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9zM12 12v7a2 2 0 0 1-4 0'}];
+const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
+const CARDS=[
+{id:'nubank',name:'Nubank',sub:'final 4821',hue:305,limite:14000,fecha:28,vence:5,base:2140.6},
+{id:'click',name:'Itaú Click',sub:'final 1190',hue:48,limite:12000,fecha:15,vence:22,base:860.2},
+{id:'uniclass',name:'Itaú Uniclass',sub:'final 7733',hue:258,limite:20000,fecha:15,vence:22,base:1420},
+{id:'lorena',name:'Itaú Lorena',sub:'adicional · 7734',hue:350,limite:4000,fecha:15,vence:22,base:380.5},
+{id:'bradesco',name:'Bradesco',sub:'final 0562',hue:22,limite:9000,fecha:20,vence:28,base:540},
+{id:'atacadao',name:'Atacadão',sub:'final 3308',hue:150,limite:3000,fecha:25,vence:2,base:0}];
+const CARD=Object.fromEntries(CARDS.map(c=>[c.id,c]));
+const BILLS0=[
+['aluguel','Aluguel','moradia',5,3200,false,true,'pix','aluguel@imobsol.com.br'],['condominio','Condomínio','moradia',8,455.43,false,false,'boleto'],
+['luz','Luz','moradia',10,412.5,true,true,'boleto'],['agua','Água','moradia',12,138.2,true,true,'boleto'],['gas','Gás','moradia',15,96.4,true,false,'boleto'],
+['net','Internet e telefone','moradia',18,219.8,false,true,'debito'],['terapia','Terapia','saude',7,800,false,false,'pix','clinica.alma@pix.com'],
+['medicacao','Medicação','saude',10,400,false,false,'debito'],['mes_lorena','Mesada da Lorena','mesadas',1,1200,false,true,'pix','lorena@email.com'],
+['mes_minha','Minha mesada','mesadas',1,500,false,true,'pix'],['dizimo','Dízimo','igreja',2,2310,false,true,'pix','igreja@pix.org.br'],
+['ofertas','Ofertas','igreja',14,890,false,false,'pix'],['matheus','Ajuda ao Matheus','familia',21,2090,false,true,'pix','matheus.s@email.com'],
+['canto','Aula de canto','lazer',22,360,false,true,'pix'],['streaming','Streaming','lazer',27,120,false,true,'debito'],
+['carro','Parcela do carro','dividas',20,2380,false,true,'boleto'],['nubank_acordo','Acordo Nubank','dividas',25,2730,false,true,'boleto'],
+['igor','Acordo Igor','dividas',28,1000,false,false,'pix']].map(a=>({id:a[0],name:a[1],cat:a[2],due:a[3],value:a[4],variable:a[5],auto:a[6],method:a[7],pix:a[8]||''}));
+const VARS=[['Atacadão','mercado',6,312.4,'cartao','atacadao',1],['Pão de Açúcar','mercado',14,186.9,'cartao','click',1],['Hortifruti','mercado',18,48.7,'pix',null,1],['Mercadinho','mercado',20,92.3,'debito',null,1],
+['iFood','rango',3,38.9,'cartao','nubank',1],['Padaria','rango',5,14.5,'debito',null,1],['Café','rango',6,12,'debito',null,1],['iFood','rango',9,46.8,'cartao','nubank',1],['Padaria','rango',11,22.4,'pix',null,1],['iFood','rango',13,41.9,'cartao','nubank',1],['Café','rango',16,9.5,'debito',null,1],['iFood','rango',17,49.9,'cartao','nubank',1],['Padaria','rango',19,18.6,'pix',null,1],['iFood','rango',20,44.9,'cartao','nubank',1],['Café','rango',21,11,'debito',null,1],['iFood','rango',21,36.5,'cartao','nubank',0],
+['Uber','transporte',4,23.4,'cartao','uniclass',1],['Gasolina','transporte',8,180,'cartao','bradesco',1],['Uber','transporte',15,31.2,'cartao','uniclass',1],['Uber','transporte',19,18.9,'cartao','uniclass',1],['99','transporte',21,16.7,'cartao','uniclass',0],
+['Chaveiro','imprevistos',12,120,'pix',null,1],['Cinema','lazer',13,64,'cartao','nubank',1],['Farmácia','saude',16,37.8,'pix',null,1],['Presente Lorena','lazer',9,0,'pix',null,1]].filter(v=>v[3]>0);
+const TODAY=21,DAYS=30,INCOME=23100;
+const METHOD={pix:'Pix',boleto:'Boleto',debito:'Débito'};
+const MONTHS=[{k:'jul',label:'JUL',name:'Julho',mode:'closed',i:6},{k:'ago',label:'AGO',name:'Agosto',mode:'closed',i:7},{k:'set',label:'SET',name:'Setembro',mode:'current',i:8},{k:'out',label:'OUT',name:'Outubro',mode:'plan',i:9},{k:'nov',label:'NOV',name:'Novembro',mode:'plan',i:10},{k:'dez',label:'DEZ',name:'Dezembro',mode:'plan',i:11}];
+const HIST=[820,-340,1210,410,-890,150,620,-210];
+const MN=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET'],MFULL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
+const brl=v=>Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const R=v=>(v<-0.004?'−':'')+'R$ '+brl(v);
+const R0=v=>(v<-0.5?'−':'')+'R$ '+Math.round(Math.abs(v)).toLocaleString('pt-BR');
+const N0=v=>Math.round(v).toLocaleString('pt-BR');
+const closedSpent=mi=>CATS.map((c,ci)=>(c.nature==='variavel'||c.nature==='reserva')?Math.round(c.budget*(.72+((ci*37+mi*53)%48)/100)*100)/100:c.budget);
+const INSIGHT={rango:'11 pedidos em 21 dias. Terça e sexta concentram 60%, e 7 saíram depois das 21h.',mercado:'Uma compra grande no Atacadão no começo do mês e reposições a cada 4 ou 5 dias. As reposições já somam mais da metade da compra grande.',transporte:'Uber aparece mais depois das 22h. Gasolina foi um tanque só, no dia 8.',moradia:'Luz veio 14% acima da média de junho a agosto. O resto ficou igual ao mês passado.',lazer:'Streaming e aula de canto já ocupam o orçamento inteiro. Qualquer saída extra vira excesso.',imprevistos:'Um chaveiro no dia 12. Sobraram R$ 180 do colchão do mês.'};
+const toggle=on=>({on,track:on?GREEN:'rgba(120,120,128,.22)',knob:on?'translateX(18px)':'translateX(0px)'});
+function initTxs(){const t=[];BILLS0.forEach(b=>t.push({id:'b_'+b.id,bill:b.id,desc:b.name,cat:b.cat,day:b.due,value:b.value,confirmed:b.due<=TODAY&&b.id!=='gas'&&b.id!=='matheus',kind:b.cat==='dividas'?'parcela':'fixa',method:b.method,card:null,est:b.id==='gas'}));VARS.forEach((v,i)=>t.push({id:'v'+i,desc:v[0],cat:v[1],day:v[2],value:v[3],method:v[4],card:v[5],confirmed:!!v[6],kind:'variavel'}));return t;}
+const planInit=()=>({budgets:Object.fromEntries(CATS.map(c=>[c.id,c.budget])),extras:[]});
+const TABS=[['hoje','Hoje','M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4'],['gastos','Gastos','M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01'],['historico','Histórico','M5 20v-7M11 20V5M17 20v-10M3 20h18'],['piloto','Piloto','M13 3 5 13.5h6L10 21l8-10.5h-6z'],['mais','Mais','M5 6.5A1.5 1.5 0 0 1 6.5 5h2A1.5 1.5 0 0 1 10 6.5v2A1.5 1.5 0 0 1 8.5 10h-2A1.5 1.5 0 0 1 5 8.5zM14 6.5A1.5 1.5 0 0 1 15.5 5h2A1.5 1.5 0 0 1 19 6.5v2a1.5 1.5 0 0 1-1.5 1.5h-2A1.5 1.5 0 0 1 14 8.5zM5 15.5A1.5 1.5 0 0 1 6.5 14h2a1.5 1.5 0 0 1 1.5 1.5v2A1.5 1.5 0 0 1 8.5 19h-2A1.5 1.5 0 0 1 5 17.5zM14 15.5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5v2a1.5 1.5 0 0 1-1.5 1.5h-2a1.5 1.5 0 0 1-1.5-1.5z']];
+const INDEX=[['hoje','Hoje'],['lancar','Lançar gasto'],['recibos','Recibos'],['scan','Escanear cupom'],['gastos','Gastos'],['categoria','Detalhe de categoria'],['cartoes','Cartões'],['dividas','Dívidas'],['historico','Histórico'],['planejar','Planejar outubro'],['fixas','Contas fixas'],['fixaEdit','Nova conta fixa'],['piloto','Piloto automático'],['alerta','Autorização Face ID'],['metas','Metas e reservas'],['ajustes','Ajustes'],['onboarding','Onboarding']];
+
+class Component extends DCLogic {
+  scroller=React.createRef();
+  state={tab:'hoje',stack:[],month:'set',hero:0,txs:initTxs(),bills:BILLS0.map(b=>({...b})),
+    plan:{out:planInit(),nov:planInit(),dez:planInit()},showExtras:false,
+    sheet:false,lan:{amt:'',cat:'rango',card:'pix',desc:null,rcp:null},scan:false,onboarding:false,alertId:null,alertPhase:'ask',toast:null,
+    cardSel:'nubank',histSel:7,filter:'todos',query:'',trava:3000,draft:null,
+    sets:{faceid:true,reminder:true,share:true,siri:false,widget:true},
+    receipts:[{id:'r1',merchant:'iFood',origin:'Compartilhado do iFood · 20:14',value:42.9,cat:'rango',card:'nubank',saved:false},{id:'r2',merchant:'Uber',origin:'Compartilhado do Uber · 18:02',value:27.6,cat:'transporte',card:'uniclass',saved:false},{id:'r3',merchant:'Drogasil',origin:'Cupom escaneado · ontem',value:64.3,cat:'saude',card:'pix',saved:false}]};
+  componentDidMount(){const m={'Onboarding':'onboarding','Piloto':'piloto','Cartões':'cartoes','Lançar gasto':'lancar','Planejar':'planejar'};const k=m[this.props.startScreen];if(k)this.jump(k);}
+  componentDidUpdate(pp,ps){if(ps.tab+JSON.stringify(ps.stack)!==this.state.tab+JSON.stringify(this.state.stack)&&this.scroller.current)this.scroller.current.scrollTop=0;if(pp.startScreen!==this.props.startScreen)this.componentDidMount();}
+  go=tab=>this.setState({tab,stack:[]});
+  nav=(n,p)=>this.setState(s=>({stack:[...s.stack,{n,p}]}));
+  back=()=>this.setState(s=>({stack:s.stack.slice(0,-1)}));
+  toast=msg=>{clearTimeout(this._t);this.setState({toast:msg});this._t=setTimeout(()=>this.setState({toast:null}),2300);};
+  toggleTx=id=>this.setState(s=>({txs:s.txs.map(t=>t.id===id?{...t,confirmed:!t.confirmed}:t)}));
+  blankDraft=()=>({id:null,name:'',value:'',due:10,cat:'moradia',variable:false,auto:false,method:'pix',pix:''});
+  openSheet=(pre)=>this.setState({sheet:true,lan:{amt:'',cat:'rango',card:'pix',desc:null,rcp:null,...(pre||{})}});
+  jump=k=>{const base={sheet:false,scan:false,onboarding:false,alertId:null};
+    if(['hoje','gastos','historico','piloto','mais'].includes(k))return this.setState({...base,tab:k,stack:[],month:'set'});
+    const pm={recibos:['hoje'],categoria:['hoje','rango'],cartoes:['mais'],dividas:['mais'],planejar:['hoje','out'],fixas:['mais'],metas:['mais'],ajustes:['mais']};
+    if(k==='fixaEdit')return this.setState({...base,tab:'mais',stack:[{n:'fixas'},{n:'fixaEdit'}],draft:this.blankDraft()});
+    if(pm[k])return this.setState({...base,tab:pm[k][0],stack:[{n:k,p:pm[k][1]}]});
+    if(k==='lancar'){this.setState(base);return this.openSheet();}
+    if(k==='scan')return this.setState({...base,scan:true});
+    if(k==='onboarding')return this.setState({...base,onboarding:true});
+    if(k==='alerta')return this.setState({...base,tab:'piloto',stack:[],alertId:'matheus',alertPhase:'ask'});};
+  key=k=>this.setState(s=>{let a=s.lan.amt;if(k==='del')a=a.slice(0,-1);else if(k===','){if(a.includes(','))return null;a=(a||'0')+',';}else{if(a.includes(',')&&a.split(',')[1].length>=2)return null;if(a.replace(',','').length>=7)return null;if(a==='0')a='';a+=k;}return{lan:{...s.lan,amt:a}};});
+  addTx=(tx,msg)=>{this.setState(s=>({txs:[...s.txs,{id:'n'+Date.now()+Math.random(),day:TODAY,confirmed:true,kind:'variavel',...tx}]}));this.toast(msg);};
+  saveLan=()=>{const s=this.state,v=parseFloat((s.lan.amt||'0').replace(',','.'));if(!v)return;const c=CAT[s.lan.cat],pix=s.lan.card==='pix';
+    this.setState(st=>({sheet:false,receipts:st.lan.rcp?st.receipts.map(r=>r.id===st.lan.rcp?{...r,saved:true}:r):st.receipts}));
+    this.addTx({desc:s.lan.desc||c.name,cat:c.id,value:v,method:pix?'pix':'cartao',card:pix?null:s.lan.card},`${R(v)} salvo em ${c.name}`);};
+  authorize=()=>{this.setState({alertPhase:'scan'});setTimeout(()=>{const id=this.state.alertId,b=this.state.bills.find(x=>x.id===id);this.setState(s=>({alertId:null,txs:s.txs.map(t=>t.bill===id?{...t,confirmed:true}:t)}));this.toast(`Pix de ${R(b.value)} enviado`);},1200);};
+  setDraft=patch=>this.setState(s=>({draft:{...s.draft,...patch}}));
+  saveDraft=()=>{const d=this.state.draft,v=parseFloat(String(d.value).replace(/\./g,'').replace(',','.'));if(!d.name.trim()||!v)return this.toast('Falta nome ou valor');
+    const b={...d,value:v,id:d.id||'nb'+Date.now()};this.setState(s=>({bills:d.id?s.bills.map(x=>x.id===d.id?b:x):[...s.bills,b],stack:s.stack.slice(0,-1)}));this.toast('Vale a partir de outubro');};
+  stepPlan=(k,id,d)=>this.setState(s=>{const p=s.plan[k];return{plan:{...s.plan,[k]:{...p,budgets:{...p.budgets,[id]:Math.max(0,p.budgets[id]+d)}}}};});
+  stepExtra=(k,i,d)=>this.setState(s=>{const p=s.plan[k];return{plan:{...s.plan,[k]:{...p,extras:p.extras.map((e,j)=>j===i?{...e,value:Math.max(0,e.value+d)}:e).filter(e=>e.value>0)}}};});
+  addExtra=(k,e)=>this.setState(s=>{const p=s.plan[k];return{showExtras:false,plan:{...s.plan,[k]:{...p,extras:[...p.extras,e]}}};});
+
+  renderVals(){
+    const s=this.state,txs=s.txs;
+    const cur=s.stack.length?s.stack[s.stack.length-1]:{n:s.tab};
+    const is={};is[cur.n]=true;
+    const spent=id=>txs.filter(t=>t.cat===id).reduce((a,t)=>a+t.value,0);
+    const sumConf=txs.filter(t=>t.confirmed).reduce((a,t)=>a+t.value,0);
+    const previsto=CATS.reduce((a,c)=>a+Math.max(c.budget,spent(c.id)),0);
+    const sobraPrev=INCOME-previsto,saldoConf=INCOME-sumConf;
+    const fixPend=txs.filter(t=>!t.confirmed&&t.kind!=='variavel'),faltaFixas=fixPend.reduce((a,t)=>a+t.value,0);
+    const varRem=CATS.filter(c=>c.nature==='variavel'||c.nature==='reserva').reduce((a,c)=>a+Math.max(0,c.budget-spent(c.id)),0);
+    const podeHoje=varRem/(DAYS-TODAY+1);
+    const cardFat=id=>CARD[id].base+txs.filter(t=>t.card===id).reduce((a,t)=>a+t.value,0);
+    const faturas=CARDS.reduce((a,c)=>a+cardFat(c.id),0);
+    const billsTotal=s.bills.reduce((a,b)=>a+b.value,0);
+    const billOf=id=>s.bills.find(b=>b.id===id);
+    const dayLbl=d=>d===TODAY?'hoje':d===TODAY-1?'ontem':'dia '+d;
+    const decor=(t,i)=>{const c=CAT[t.cat];return{...t,catName:c.name,path:c.icon,fg:col(c.hue),bg:col(c.hue,.16),val:(t.est?'~':'')+R(t.value),how:t.card?CARD[t.card].name:METHOD[t.method],
+      sep:i?'1px solid rgba(21,22,27,.06)':'none',toggle:()=>this.toggleTx(t.id),
+      chkBg:t.confirmed?GREEN:'transparent',chkBd:t.confirmed?GREEN:'rgba(21,22,27,.22)',chkOp:t.confirmed?1:0}};
+    const month=MONTHS.find(m=>m.k===s.month),mode=month.mode;
+    let heroList,segs,shortcuts,catCards,subtitle,catRight;
+    if(mode==='current'){
+      subtitle=`dia ${TODAY} · faltam ${DAYS-TODAY} dias`;
+      heroList=[{label:'Sobra prevista',v:sobraPrev,sub:'se o resto do mês sair como planejado'},{label:'Saldo confirmado agora',v:saldoConf,sub:'o que entrou menos o que você já confirmou'},{label:'Falta pagar das fixas',v:faltaFixas,sub:`${fixPend.length} contas até o dia ${DAYS}`}];
+      segs=[{f:sumConf,c:INK,label:'Confirmado',v:R0(sumConf)},{f:Math.max(0,previsto-sumConf),c:'rgba(21,22,27,.2)',label:'Ainda sai',v:R0(previsto-sumConf)},{f:Math.max(0,sobraPrev),c:ACC,label:'Sobra',v:R0(sobraPrev)}];
+      shortcuts=[{label:'Pode gastar hoje',value:R(podeHoje),sub:'no variável, até o dia 30',go:()=>this.setState({tab:'gastos',stack:[],filter:'variaveis'})},{label:'Faturas abertas',value:R0(faturas),sub:'em 6 cartões',go:()=>this.nav('cartoes')}];
+      catCards=CATS.map(c=>{const sp=spent(c.id),left=c.budget-sp;return{...c,amount:R0(sp),of:'/ '+N0(c.budget),pct:Math.min(100,sp/c.budget*100)+'%',pctTxt:Math.round(sp/c.budget*100)+'%',barC:left<0?RED:col(c.hue),sub:left>=0?'sobra '+R(left):'passou '+R(-left),subC:left<0?RED:'rgba(21,22,27,.5)'};});
+      catRight=`${R0(txs.reduce((a,t)=>a+t.value,0))} de ${R0(CATS.reduce((a,c)=>a+c.budget,0))}`;
+    }else if(mode==='closed'){
+      subtitle='mês fechado · 2026';
+      const sp=closedSpent(month.i),saiu=sp.reduce((a,b)=>a+b,0),sob=HIST[month.i],entrou=saiu+sob;
+      heroList=[{label:'Sobra realizada',v:sob,sub:sob<0?'o mês fechou no vermelho':'o que ficou na conta'},{label:'Entrou',v:entrou,sub:'salários e VR'},{label:'Saiu',v:saiu,sub:'tudo confirmado'}];
+      segs=[{f:saiu,c:INK,label:'Saiu',v:R0(saiu)},{f:Math.abs(sob),c:sob<0?RED:GREEN,label:sob<0?'Faltou':'Sobrou',v:R0(sob)}];
+      shortcuts=[{label:'Só leitura',value:month.name+' fechou',sub:'confirmados e travados',go:()=>this.go('historico')}];
+      catCards=CATS.map((c,i)=>{const v=sp[i],left=c.budget-v;return{...c,amount:R0(v),of:'/ '+N0(c.budget),pct:Math.min(100,v/c.budget*100)+'%',pctTxt:Math.round(v/c.budget*100)+'%',barC:left<-.01?RED:col(c.hue),sub:left>=-.01?(left<.01?'no orçamento':'sobrou '+R(left)):'passou '+R(-left),subC:left<-.01?RED:'rgba(21,22,27,.5)'};});
+      catRight=R0(saiu)+' no total';
+    }else{
+      subtitle='planejamento · 2026';
+      const p=s.plan[s.month],tb=CATS.reduce((a,c)=>a+p.budgets[c.id],0)+p.extras.reduce((a,e)=>a+e.value,0),sob=INCOME-tb,fixT=CATS.filter(c=>c.nature!=='variavel'&&c.nature!=='reserva').reduce((a,c)=>a+p.budgets[c.id],0);
+      heroList=[{label:'Sobra planejada',v:sob,sub:'renda menos o que você planejou'},{label:'Fixas já copiadas',v:billsTotal,sub:`${s.bills.length} contas nasceram sozinhas`},{label:'Dá pra guardar',v:Math.max(0,sob*.7),sub:'70% da sobra, deixando 30% de folga'}];
+      segs=[{f:fixT,c:INK,label:'Fixas',v:R0(fixT)},{f:Math.max(0,tb-fixT),c:'rgba(21,22,27,.2)',label:'Variáveis',v:R0(tb-fixT)},{f:Math.max(0,sob),c:ACC,label:'Sobra',v:R0(sob)}];
+      shortcuts=[{label:'Contas fixas já copiadas',value:`${s.bills.length} · ${R0(billsTotal)}`,sub:'nada pra recriar',go:()=>this.nav('fixas')},{label:'Ajustar orçamento',value:'Planejar',sub:'passo de R$ 50',go:()=>this.nav('planejar',s.month)}];
+      catCards=CATS.map(c=>({...c,amount:R0(p.budgets[c.id]),of:'planejado',pct:'0%',pctTxt:'',barC:col(c.hue),sub:c.origin,subC:'rgba(21,22,27,.5)'}));
+      catRight='toque para ajustar';
+    }
+    catCards=catCards.map(c=>({...c,fg:col(c.hue),bg:col(c.hue,.16),go:()=>mode==='plan'?this.nav('planejar',s.month):mode==='current'?this.nav('categoria',c.id):null}));
+    const h=heroList[s.hero%3],cents=Math.round(Math.abs(h.v)*100);
+    const hero={label:h.label,sub:h.sub,sign:h.v<-0.004?'−':'',int:Math.floor(cents/100).toLocaleString('pt-BR'),cents:','+String(cents%100).padStart(2,'0'),color:h.v<-0.004?RED:INK};
+    const heroDots=[0,1,2].map(i=>({w:i===s.hero%3?'18px':'6px',c:i===s.hero%3?INK:'rgba(21,22,27,.2)'}));
+    const rail=MONTHS.map(m=>({label:m.label,bg:m.k===s.month?INK:'transparent',fg:m.k===s.month?'#fff':m.mode==='plan'?'rgba(21,22,27,.4)':'rgba(21,22,27,.62)',dot:m.mode==='current'?1:0,dotC:m.k===s.month?'#fff':ACC,select:()=>this.setState({month:m.k,hero:0})}));
+    const pendAll=txs.filter(t=>!t.confirmed).sort((a,b)=>a.day-b.day);
+    const pending=pendAll.slice(0,4).map((t,i)=>{const b=t.bill&&billOf(t.bill),appr=b&&b.auto&&b.value>1000&&t.day<=TODAY;const d=decor(t,i);
+      return{...d,meta:`${t.day>TODAY?'vence dia '+t.day:dayLbl(t.day)} · ${d.how}`,tag:appr?'Aprovar':t.est?'estimado':'',tagC:appr?AMBER:'rgba(21,22,27,.45)',tagBg:appr?'oklch(.64 .15 62 / .14)':'rgba(21,22,27,.06)',hasTag:!!(appr||t.est),
+        toggle:appr?()=>this.setState({alertId:b.id,alertPhase:'ask'}):()=>{this.toggleTx(t.id);this.toast(`${t.desc} confirmado`);}};});
+    const autoPaid=txs.filter(t=>t.bill&&billOf(t.bill)&&billOf(t.bill).auto&&t.confirmed).reduce((a,t)=>a+t.value,0);
+    const nextAuto=s.bills.filter(b=>b.auto&&b.due>TODAY).sort((a,b)=>a.due-b.due)[0];
+    const pilotLine=mode==='plan'?`${s.bills.filter(b=>b.auto).length} contas vão se pagar sozinhas`:`${R0(autoPaid)} pagos sozinhos${nextAuto?` · próxima: ${nextAuto.name}, dia ${nextAuto.due}`:''}`;
+    const small=txs.filter(t=>t.kind==='variavel'&&t.value<50),smallSum=small.reduce((a,t)=>a+t.value,0);
+    const luz=412.5,cmp=smallSum>luz?'Mais que a conta de luz inteira.':smallSum>luz*.8?'Quase uma conta de luz.':`${Math.round(smallSum/luz*100)}% de uma conta de luz.`;
+    const miud={title:`${R(smallSum)} em ${small.length} gastos pequenos`,sub:`Tudo abaixo de R$ 50 em setembro. ${cmp}`,dots:small.sort((a,b)=>a.day-b.day).map(t=>({s:(7+t.value/50*13)+'px',c:col(CAT[t.cat].hue)}))};
+    const home={subtitle,monthName:month.name,isCurrent:mode==='current',isPlan:mode==='plan',isClosed:mode==='closed',notClosed:mode!=='closed',pendCount:pendAll.length,morePend:pendAll.length>4,allDone:pendAll.length===0,catRight,
+      pilotLine,rcpCount:s.receipts.filter(r=>!r.saved).length,hasRcp:s.receipts.some(r=>!r.saved)};
+
+    // gastos
+    const F=s.filter,q=s.query.trim().toLowerCase();
+    const flist=txs.filter(t=>(F==='todos'||(F==='fixos'&&t.kind!=='variavel')||(F==='variaveis'&&t.kind==='variavel')||(F==='pend'&&!t.confirmed))&&(!q||t.desc.toLowerCase().includes(q)||CAT[t.cat].name.toLowerCase().includes(q)));
+    const days=[...new Set(flist.map(t=>t.day))].sort((a,b)=>b-a);
+    const groups=days.map(d=>{const it=flist.filter(t=>t.day===d);return{label:d===TODAY?'Hoje':d===TODAY-1?'Ontem':d>TODAY?`${d} de setembro · previsto`:`${d} de setembro`,total:R(it.reduce((a,t)=>a+t.value,0)),items:it.map((t,i)=>({...decor(t,i),meta:`${CAT[t.cat].name} · ${t.card?CARD[t.card].name:METHOD[t.method]}`,status:t.confirmed?'confirmado':'a confirmar',stC:t.confirmed?GREEN:AMBER}))};});
+    const filters=[['todos','Todos'],['fixos','Fixos'],['variaveis','Variáveis'],['pend','Não confirmados']].map(([k,l])=>({label:l,bg:F===k?INK:'transparent',fg:F===k?'#fff':'rgba(21,22,27,.62)',go:()=>this.setState({filter:k})}));
+    const gastos={count:`${flist.length} lançamentos`,sum:R(flist.reduce((a,t)=>a+t.value,0)),empty:flist.length===0,groups,query:s.query,onQuery:e=>this.setState({query:e.target.value}),filters};
+
+    // categoria
+    let catD=null;
+    if(is.categoria){const c=CAT[cur.p]||CAT.rango,sp=spent(c.id),left=c.budget-sp,list=txs.filter(t=>t.cat===c.id).sort((a,b)=>b.day-a.day),pct=sp/c.budget,C=2*Math.PI*54;
+      catD={name:c.name,path:c.icon,fg:col(c.hue),bg:col(c.hue,.16),ringC:left<0?RED:col(c.hue),dash:`${Math.min(1,pct)*C} ${C}`,pct:Math.round(pct*100)+'%',spent:R(sp),budget:'de '+R(c.budget),left:left>=0?'sobra '+R(left):'passou '+R(-left),leftC:left<0?RED:GREEN,
+        insight:INSIGHT[c.id]||'Categoria fixa: o valor se repete todo mês e o mês novo já nasce com ela. Nada fora do padrão em setembro.',ticket:R(list.length?sp/list.length:0),n:String(list.length),
+        list:list.map((t,i)=>({...decor(t,i),meta:`${dayLbl(t.day)} · ${t.card?CARD[t.card].name:METHOD[t.method]}`}))};}
+
+    // cartoes
+    const cardsV=CARDS.map(c=>{const f=cardFat(c.id);return{...c,fat:R(f),dates:`fecha ${c.fecha} · vence ${c.vence}`,grad:`linear-gradient(145deg,oklch(.62 .16 ${c.hue}),oklch(.42 .15 ${c.hue+25}))`,ring:c.id===s.cardSel?'0 0 0 3px #fff,0 0 0 5px '+INK+',0 18px 30px -14px rgba(0,0,0,.4)':'0 12px 24px -14px rgba(0,0,0,.35)',op:c.id===s.cardSel?1:.78,sel:()=>this.setState({cardSel:c.id})};});
+    const sc=CARD[s.cardSel],sf=cardFat(sc.id),scp=sf/sc.limite;
+    const cardD={name:sc.name,fat:R(sf),pct:Math.round(scp*100)+'% do limite',w:Math.min(100,scp*100)+'%',livre:R0(sc.limite-sf),fecha:'dia '+sc.fecha,vence:'dia '+sc.vence,limite:R0(sc.limite),barC:`oklch(.54 .15 ${sc.hue})`,base:R(sc.base),hasBase:sc.base>0,
+      list:txs.filter(t=>t.card===sc.id).sort((a,b)=>b.day-a.day).map((t,i)=>({...decor(t,i),meta:`${dayLbl(t.day)} · ${CAT[t.cat].name}`})),empty:!txs.some(t=>t.card===sc.id)};
+
+    // historico
+    const hv=[...HIST,sobraPrev],mx=Math.max(...hv.map(Math.abs)),sel=s.histSel;
+    const bars=hv.map((v,i)=>({label:MN[i],up:v>0?(v/mx*104)+'px':'0px',down:v<0?Math.min(44,-v/mx*104)+'px':'0px',c:v<0?(i===sel?RED:'oklch(.57 .2 25 / .32)'):(i===8?(i===sel?ACC:'oklch(.55 .21 262 / .35)'):(i===sel?INK:'rgba(21,22,27,.16)')),lc:i===sel?INK:'rgba(21,22,27,.4)',sel:()=>this.setState({histSel:i})}));
+    let hs;if(sel===8){const sp=CATS.map(c=>Math.max(c.budget,spent(c.id)));hs={e:INCOME,s:previsto,sp};}else{const sp=closedSpent(sel),sa=sp.reduce((a,b)=>a+b,0);hs={e:sa+HIST[sel],s:sa,sp};}
+    const top=CATS.map((c,i)=>({c,v:hs.sp[i]})).sort((a,b)=>b.v-a.v).slice(0,3);
+    const hist={title:MFULL[sel]+(sel===8?' · previsto':''),entrou:R0(hs.e),saiu:R0(hs.s),sobra:R0(hv[sel]),sobraC:hv[sel]<0?RED:GREEN,bars,
+      top:top.map(t=>({name:t.c.name,path:t.c.icon,fg:col(t.c.hue),bg:col(t.c.hue,.16),v:R0(t.v),w:(t.v/top[0].v*100)+'%',pct:Math.round(t.v/hs.s*100)+'% do que saiu'})),total:R0(hv.reduce((a,b)=>a+b,0))};
+
+    // piloto
+    const pbills=[...s.bills].sort((a,b)=>a.due-b.due).map((b,i)=>{const t=txs.find(x=>x.bill===b.id);let st,sc2,sb;
+      if(!b.auto){st='Manual';sc2='rgba(21,22,27,.55)';sb='rgba(21,22,27,.07)';}else if(t&&t.confirmed){st='Pago';sc2=GREEN;sb='oklch(.56 .14 155 / .14)';}else if(b.value>1000&&b.due<=TODAY){st='Aprovar';sc2=AMBER;sb='oklch(.64 .15 62 / .16)';}else{st='Agendado';sc2=ACC;sb='oklch(.55 .21 262 / .12)';}
+      const c=CAT[b.cat];return{name:b.name,meta:`dia ${b.due} · ${METHOD[b.method]}`,val:(b.variable?'~':'')+R(b.value),path:c.icon,fg:col(c.hue),bg:col(c.hue,.16),st,sc:sc2,sb,...toggle(b.auto),sep:i?'1px solid rgba(21,22,27,.06)':'none',
+        flip:e=>{e.stopPropagation();this.setState(ss=>({bills:ss.bills.map(x=>x.id===b.id?{...x,auto:!x.auto}:x)}));},
+        tap:()=>st==='Aprovar'?this.setState({alertId:b.id,alertPhase:'ask'}):null,cursor:st==='Aprovar'?'pointer':'default'};});
+    const pil={paid:R(autoPaid),count:`${s.bills.filter(b=>b.auto).length} de ${s.bills.length} contas no piloto`,next:nextAuto?`próxima: ${nextAuto.name}, dia ${nextAuto.due}`:'nada agendado',trava:R0(s.trava),
+      travaOk:saldoConf>=s.trava,travaMsg:saldoConf>=s.trava?`Saldo confirmado ${R0(saldoConf)} · acima da trava`:`Saldo ${R0(saldoConf)} · pagamentos pausados`,travaC:saldoConf>=s.trava?GREEN:RED,
+      minus:()=>this.setState(x=>({trava:Math.max(0,x.trava-500)})),plus:()=>this.setState(x=>({trava:x.trava+500})),bills:pbills};
+
+    // planejar
+    const pk=is.planejar?(cur.p||'out'):'out',pm=MONTHS.find(m=>m.k===pk),pp=s.plan[pk];
+    const pTotal=CATS.reduce((a,c)=>a+pp.budgets[c.id],0)+pp.extras.reduce((a,e)=>a+e.value,0),pSob=INCOME-pTotal;
+    const plan={month:pm.name.toLowerCase(),sobra:R(pSob),sobraC:pSob<0?RED:INK,guardar:R(Math.max(0,pSob*.7)),total:R0(pTotal),
+      rows:CATS.map((c,i)=>{const v=pp.budgets[c.id],d=v-c.budget;return{name:c.name,path:c.icon,fg:col(c.hue),bg:col(c.hue,.16),origin:d===0?c.origin:(d>0?'+':'−')+R0(Math.abs(d))+' vs. setembro',oc:d===0?'rgba(21,22,27,.45)':d>0?RED:GREEN,v:R0(v),sep:i?'1px solid rgba(21,22,27,.06)':'none',minus:()=>this.stepPlan(pk,c.id,-50),plus:()=>this.stepPlan(pk,c.id,50)};}),
+      extras:pp.extras.map((e,i)=>({name:e.name,v:R0(e.value),minus:()=>this.stepExtra(pk,i,-50),plus:()=>this.stepExtra(pk,i,50)})),hasExtras:pp.extras.length>0,showExtras:s.showExtras,toggleExtras:()=>this.setState(x=>({showExtras:!x.showExtras})),
+      presets:[['IPVA',1480],['Presente',250],['Viagem',1200],['Revisão do carro',650]].map(([n,v])=>({label:`${n} · ${R0(v)}`,go:()=>this.addExtra(pk,{name:n,value:v})}))};
+
+    // fixas
+    const fxRow=(b,i)=>{const c=CAT[b.cat];return{name:b.name,meta:`dia ${b.due} · ${METHOD[b.method]} · ${c.name}`,val:(b.variable?'~':'')+R(b.value),path:c.icon,fg:col(c.hue),bg:col(c.hue,.16),badge:b.auto?'Piloto':'Manual',bc:b.auto?ACC:'rgba(21,22,27,.5)',bb:b.auto?'oklch(.55 .21 262 / .12)':'rgba(21,22,27,.06)',sep:i?'1px solid rgba(21,22,27,.06)':'none',edit:()=>this.setState(ss=>({draft:{...b,value:brl(b.value)},stack:[...ss.stack,{n:'fixaEdit'}]}))};};
+    const fixas={fixed:s.bills.filter(b=>!b.variable).sort((a,b)=>a.due-b.due).map(fxRow),vari:s.bills.filter(b=>b.variable).sort((a,b)=>a.due-b.due).map(fxRow),total:`${s.bills.length} contas · ${R(billsTotal)}`,
+      novo:()=>this.setState(ss=>({draft:this.blankDraft(),stack:[...ss.stack,{n:'fixaEdit'}]}))};
+    let draft=null;if(is.fixaEdit&&s.draft){const d=s.draft;draft={...d,title:d.id?'Editar conta fixa':'Nova conta fixa',isEdit:!!d.id,dueTxt:'dia '+d.due,
+      onName:e=>this.setDraft({name:e.target.value}),onValue:e=>this.setDraft({value:e.target.value.replace(/[^0-9.,]/g,'')}),onPix:e=>this.setDraft({pix:e.target.value}),
+      dueMinus:()=>this.setDraft({due:Math.max(1,d.due-1)}),duePlus:()=>this.setDraft({due:Math.min(28,d.due+1)}),
+      varT:toggle(d.variable),autoT:toggle(d.auto),flipVar:()=>this.setDraft({variable:!d.variable}),flipAuto:()=>this.setDraft({auto:!d.auto}),showAuto:d.auto,showPix:d.auto&&d.method==='pix',
+      cats:CATS.map(c=>({name:c.name,path:c.icon,fg:col(c.hue),bg:c.id===d.cat?col(c.hue,.18):'rgba(255,255,255,.55)',bd:c.id===d.cat?col(c.hue):'rgba(21,22,27,.08)',go:()=>this.setDraft({cat:c.id})})),
+      methods:[['pix','Pix'],['boleto','Boleto'],['debito','Débito']].map(([k,l])=>({label:l,bg:d.method===k?'#fff':'transparent',sh:d.method===k?'0 2px 8px -2px rgba(22,24,40,.18)':'none',go:()=>this.setDraft({method:k})})),
+      save:this.saveDraft,del:()=>{this.setState(ss=>({bills:ss.bills.filter(x=>x.id!==d.id),stack:ss.stack.slice(0,-1)}));this.toast('Conta fixa apagada');}};}
+
+    // dividas
+    const debts=[{name:'Carro',desc:'financiamento · 23 de 48',done:23,tot:48,parc:2380,pago:23*2380,rest:25*2380},{name:'Nubank',desc:'rotativo renegociado · 1 de 3',done:1,tot:3,parc:2730,pago:2730,rest:5460},{name:'Igor',desc:'acordo · 2 de 4',done:2,tot:4,parc:1000,pago:2000,rest:2000},{name:'C&A',desc:'quitado em julho',done:6,tot:6,parc:0,pago:1140,rest:0}];
+    const dTot=debts.reduce((a,d)=>a+d.rest,0);
+    const dividas={total:R(dTot),pctRenda:Math.round(6110/INCOME*100)+'%',w:(6110/INCOME*100)+'%',
+      list:debts.map(d=>({name:d.name,desc:d.desc,w:(d.done/d.tot*100)+'%',c:d.rest?INK:GREEN,parc:d.parc?R(d.parc)+'/mês':'—',pago:R0(d.pago),rest:d.rest?'restam '+R0(d.rest):'quitado',restC:d.rest?INK:GREEN}))};
+
+    // metas
+    const saved=34700,fixo=billsTotal,months=saved/fixo,C2=2*Math.PI*70;
+    const metas={months:months.toLocaleString('pt-BR',{maximumFractionDigits:1}),dash:`${Math.min(1,months/6)*C2} ${C2}`,fixo:R0(fixo),falta:R0(fixo*6-saved),saved:R0(saved),
+      goals:[['Reserva de emergência','6 meses de custo fixo',saved,fixo*6,GREEN],['Quitar o Nubank','2 parcelas restantes',2730,8190,ACC],['Viagem de julho','R$ 400 por mês',2400,8000,'oklch(.6 .15 55)']].map(([n,d,v,t,c])=>({name:n,desc:d,v:R0(v),t:'de '+R0(t),w:(v/t*100)+'%',pct:Math.round(v/t*100)+'%',c}))};
+
+    // ajustes
+    const tg=k=>({...toggle(s.sets[k]),flip:()=>this.setState(x=>({sets:{...x.sets,[k]:!x.sets[k]}}))});
+    const ajustes=[{title:'Dados',rows:[{label:'Importar planilha',path:'M14 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7zM14 3v4h4M9 13h6M9 17h6',kind:'chev',go:()=>this.setState({onboarding:true})},{label:'Conectar banco',path:'M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18',kind:'soon',note:'em breve'},{label:'Exportar CSV',path:'M12 15V3M8 11l4 4 4-4M5 21h14',kind:'chev',go:()=>this.toast('lastro-2026-09.csv exportado')}]},
+      {title:'Lançar rápido',rows:[{label:'Extensão de compartilhamento',path:'M12 3v12M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7',kind:'toggle',t:tg('share')},{label:'Escanear cupom',path:'M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8',kind:'chev',go:()=>this.setState({scan:true})},{label:'Atalho da Siri',path:'M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM6 11a6 6 0 0 0 12 0M12 17v4',kind:'toggle',t:tg('siri')},{label:'Widget e Lock Screen',path:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',kind:'toggle',t:tg('widget')}]},
+      {title:'Orçamento',rows:[{label:'Categorias',path:'M3 12V4h8l10 10-8 8zM7.5 8.5h.01',kind:'chev',note:'11',go:()=>this.go('hoje')},{label:'Contas fixas',path:'M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3M20 13v2a4 4 0 0 1-4 4H4',kind:'chev',note:String(s.bills.length),go:()=>this.nav('fixas')},{label:'Metas e reservas',path:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',kind:'chev',go:()=>this.nav('metas')},{label:'Dívidas',path:'M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6',kind:'chev',go:()=>this.nav('dividas')}]},
+      {title:'App',rows:[{label:'Face ID ao abrir',sub:'esconde valores no App Switcher',path:'M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4h-1M9 15.5a4 4 0 0 0 6 0',kind:'toggle',t:tg('faceid')},{label:'Lembrete de confirmação',sub:'todo dia às 21h',path:'M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0',kind:'toggle',t:tg('reminder')}]}]
+      .map(g=>({...g,rows:g.rows.map((r,i)=>({sub:'',note:'',go:null,t:toggle(false),...r,hasSub:!!r.sub,isChev:r.kind==='chev',isSoon:r.kind==='soon',isToggle:r.kind==='toggle',sep:i?'1px solid rgba(21,22,27,.06)':'none'}))}));
+
+    // mais
+    const mais=[{label:'Recibos',sub:home.rcpCount?`${home.rcpCount} esperando confirmação`:'nada novo',path:'M4 13h4l1.5 3h5L16 13h4M5 5h14l1 8v6H4v-6z',hue:262,go:()=>this.nav('recibos')},{label:'Cartões',sub:`${R0(faturas)} em faturas abertas`,path:'M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5zM3 10h18M7 15h3',hue:305,go:()=>this.nav('cartoes')},{label:'Dívidas',sub:`${R0(dTot)} em aberto`,path:'M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6',hue:45,go:()=>this.nav('dividas')},{label:'Metas e reservas',sub:`${metas.months} meses de reserva`,path:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',hue:155,go:()=>this.nav('metas')},{label:'Contas fixas',sub:`${s.bills.length} contas · ${R0(billsTotal)}`,path:'M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3M20 13v2a4 4 0 0 1-4 4H4',hue:225,go:()=>this.nav('fixas')},{label:'Planejar outubro',sub:'orçamento do mês seguinte',path:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8 3v4M16 3v4',hue:195,go:()=>this.nav('planejar','out')},{label:'Ajustes',sub:'dados, atalhos, Face ID',path:'M4 7h10M18 7h2M4 17h4M12 17h8M16 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM10 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',hue:280,go:()=>this.nav('ajustes')}]
+      .map((m,i)=>({...m,fg:col(m.hue),bg:col(m.hue,.16),sep:i?'1px solid rgba(21,22,27,.06)':'none'}));
+
+    // recibos
+    const recibos=s.receipts.map(r=>{const c=CAT[r.cat];return{...r,val:R(r.value),catName:c.name,path:c.icon,fg:col(c.hue),bg:col(c.hue,.16),how:r.card==='pix'?'Pix/débito':CARD[r.card].name,pending:!r.saved,
+      confirm:()=>{this.setState(ss=>({receipts:ss.receipts.map(x=>x.id===r.id?{...x,saved:true}:x)}));this.addTx({desc:r.merchant,cat:r.cat,value:r.value,method:r.card==='pix'?'pix':'cartao',card:r.card==='pix'?null:r.card},`${r.merchant} salvo em ${c.name}`);},
+      edit:()=>this.openSheet({amt:brl(r.value).replace(/\./g,''),cat:r.cat,card:r.card,desc:r.merchant,rcp:r.id})};});
+
+    // sheet
+    const L=s.lan,[ip,dp]=L.amt.split(','),amtNum=parseFloat((L.amt||'0').replace(',','.'));
+    const lan={amt:(ip?Number(ip):0).toLocaleString('pt-BR')+(L.amt.includes(',')?','+(dp||''):''),amtC:L.amt?INK:'rgba(21,22,27,.22)',title:L.desc||'Novo gasto',
+      cats:CATS.map(c=>({name:c.name,path:c.icon,fg:col(c.hue),bg:c.id===L.cat?col(c.hue,.2):'rgba(255,255,255,.6)',bd:c.id===L.cat?col(c.hue):'rgba(21,22,27,.07)',go:()=>this.setState(x=>({lan:{...x.lan,cat:c.id}}))})),
+      cards:[{id:'pix',name:'Pix/débito'},...CARDS].map(c=>({name:c.name,bg:c.id===L.card?INK:'rgba(255,255,255,.6)',fg:c.id===L.card?'#fff':INK,bd:c.id===L.card?INK:'rgba(21,22,27,.08)',go:()=>this.setState(x=>({lan:{...x.lan,card:c.id}}))})),
+      keys:['1','2','3','4','5','6','7','8','9',',','0','del'].map(k=>({k,isDel:k==='del',notDel:k!=='del',press:()=>this.key(k)})),
+      saveLabel:'Salvar em '+CAT[L.cat].name,saveOp:amtNum>0?1:.35,save:this.saveLan};
+    const alertB=s.alertId?billOf(s.alertId):null;
+    const alert={title:alertB?`Autorizar Pix de ${R(alertB.value)}`:'',body:alertB?`Para ${alertB.name.replace('Ajuda ao ','')} · chave ${alertB.pix||'cadastrada'}`:'',scanning:s.alertPhase==='scan',asking:s.alertPhase!=='scan'};
+    const activeKey=s.onboarding?'onboarding':s.scan?'scan':s.alertId?'alerta':s.sheet?'lancar':cur.n;
+    return {is,pushed:s.stack.length>0,home,hero,heroDots,segs,shortcuts,catCards,rail,pending,miud,gastos,catD,cardsV,cardD,hist,pil,plan,fixas,draft,dividas,metas,ajustes,mais,recibos,lan,alert,
+      scroller:this.scroller,back:this.back,openSheet:()=>this.openSheet(),closeSheet:()=>this.setState({sheet:false}),cycleHero:()=>this.setState(x=>({hero:(x.hero+1)%3})),
+      goHist:()=>this.go('historico'),goRecibos:()=>this.nav('recibos'),goPiloto:()=>this.go('piloto'),goPend:()=>this.setState({tab:'gastos',stack:[],filter:'pend'}),goMiud:()=>this.setState({tab:'gastos',stack:[],filter:'variaveis'}),
+      openScan:()=>this.setState({sheet:false,scan:true}),closeScan:()=>this.setState({scan:false}),saveScan:()=>{this.setState({scan:false});this.addTx({desc:'Padaria Real',cat:'rango',value:23.8,method:'debito',card:null},'R$ 23,80 salvo em Rango & Café');},
+      sheetRecibos:()=>this.setState(x=>({sheet:false,stack:[...x.stack,{n:'recibos'}]})),
+      obImport:()=>{this.setState({onboarding:false});this.toast(`${s.bills.length} contas fixas importadas`);},obZero:()=>{this.setState({onboarding:false});this.toast('Começando do zero');},
+      alertCancel:()=>this.setState({alertId:null}),authorize:this.authorize,
+      sheetT:s.sheet?'translateY(0)':'translateY(105%)',sheetO:s.sheet?1:0,sheetPE:s.sheet?'auto':'none',
+      alertO:s.alertId?1:0,alertS:s.alertId?'scale(1)':'scale(1.08)',alertPE:s.alertId?'auto':'none',
+      toastMsg:s.toast||'',toastO:s.toast?1:0,toastT:s.toast?'translateY(0)':'translateY(-14px)',
+      statusFg:s.scan?'#fff':INK,scanOpen:s.scan,obOpen:s.onboarding,
+      obRows:[['DESPESAS','18 contas fixas'],['Categoria','11 categorias novas'],['Data','Dia de vencimento'],['RECEITAS','Salários + VR como renda'],['Coluna OK','Confirmado / a confirmar'],['42 abas','Ficam na planilha']].map(([a,b],i)=>({a,b,sep:i?'1px solid rgba(21,22,27,.06)':'none'})),showIndex:this.props.showIndex??true,
+      tabs:TABS.map(([k,l,p])=>({label:l,path:p,bg:s.tab===k?'rgba(21,22,27,.07)':'transparent',fg:s.tab===k?ACC:'rgba(21,22,27,.72)',go:()=>this.go(k)})),
+      index:INDEX.map(([k,l],i)=>({label:l,n:String(i+1).padStart(2,'0'),bg:k===activeKey?'#15161B':'transparent',fg:k===activeKey?'#fff':'rgba(21,22,27,.75)',go:()=>this.jump(k)}))};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+// Valores não secretos. Crie Config/Secrets.xcconfig (ignorado pelo git) a partir de
+// Config/Secrets.example.xcconfig para apontar para o seu projeto Supabase.
+SUPABASE_URL = http:/$()/127.0.0.1:54321
+SUPABASE_ANON_KEY =
+LASTRO_TEAM_ID =
+LASTRO_DEMO = NO
+
+#include? "Secrets.xcconfig"

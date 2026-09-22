@@ -1,0 +1,41 @@
+# Configuração do Supabase CLI (supabase start / supabase db reset).
+project_id = "lastro"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 16
+
+[auth]
+enabled = true
+site_url = "lastro://auth"
+additional_redirect_urls = ["lastro://auth"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+
+[auth.external.apple]
+enabled = true
+client_id = "env(APPLE_BUNDLE_ID)"
+secret = "env(APPLE_SIGNIN_SECRET)"
+
+[storage]
+enabled = true
+file_size_limit = "10MiB"
+
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+
+[functions.pagamentos]
+verify_jwt = true
+
+[functions.piloto]
+verify_jwt = false   # chamado pelo cron com o segredo CRON_SECRET
+
+[functions.pluggy-connect-token]
+verify_jwt = true
