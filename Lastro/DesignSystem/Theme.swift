@@ -57,29 +57,17 @@ extension LinearGradient {
 // MARK: - Tipografia
 
 /// Tamanhos e tracking do design. Tracking vem em em, como no CSS (-.035em).
-struct TextStyle: ViewModifier {
-    let size: CGFloat
-    let weight: Font.Weight
-    let tracking: CGFloat
-
-    func body(content: Content) -> some View {
-        content
-            .font(.system(size: size, weight: weight))
-            .tracking(size * tracking)
-    }
-}
-
 extension View {
-    func textStyle(_ size: CGFloat, _ weight: Font.Weight = .regular, tracking: CGFloat = 0) -> some View {
-        modifier(TextStyle(size: size, weight: weight, tracking: tracking))
+    nonisolated func textStyle(_ size: CGFloat, _ weight: Font.Weight = .regular, tracking: CGFloat = 0) -> some View {
+        font(.system(size: size, weight: weight)).tracking(size * tracking)
     }
 
     /// Título grande da tela: 34 bold, -.035em.
-    func largeTitle() -> some View { textStyle(34, .bold, tracking: -0.035) }
+    nonisolated func largeTitle() -> some View { textStyle(34, .bold, tracking: -0.035) }
     /// Título de tela empilhada: 30 bold, -.035em.
-    func pushedTitle() -> some View { textStyle(30, .bold, tracking: -0.035) }
+    nonisolated func pushedTitle() -> some View { textStyle(30, .bold, tracking: -0.035) }
     /// Título de seção: 20 bold, -.025em.
-    func sectionTitle() -> some View { textStyle(20, .bold, tracking: -0.025) }
+    nonisolated func sectionTitle() -> some View { textStyle(20, .bold, tracking: -0.025) }
     /// Rótulo em caixa alta: 12 bold, .06em.
-    func eyebrow() -> some View { textStyle(12, .bold, tracking: 0.06).textCase(.uppercase) }
+    nonisolated func eyebrow() -> some View { textStyle(12, .bold, tracking: 0.06).textCase(.uppercase) }
 }

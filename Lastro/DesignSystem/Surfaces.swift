@@ -9,6 +9,11 @@ struct PanelSurface: ViewModifier {
     var radius: CGFloat = 22
     var fill: Double = 0.6
 
+    nonisolated init(radius: CGFloat = 22, fill: Double = 0.6) {
+        self.radius = radius
+        self.fill = fill
+    }
+
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         content
@@ -31,6 +36,8 @@ struct PanelSurface: ViewModifier {
 struct HeroSurface: ViewModifier {
     var radius: CGFloat = 32
 
+    nonisolated init(radius: CGFloat = 32) { self.radius = radius }
+
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         content
@@ -49,6 +56,11 @@ struct TintedSurface: ViewModifier {
     let tint: Color
     var radius: CGFloat = 24
 
+    nonisolated init(tint: Color, radius: CGFloat = 24) {
+        self.tint = tint
+        self.radius = radius
+    }
+
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         content
@@ -63,18 +75,18 @@ struct TintedSurface: ViewModifier {
 }
 
 extension View {
-    func panel(radius: CGFloat = 22, fill: Double = 0.6) -> some View { modifier(PanelSurface(radius: radius, fill: fill)) }
-    func hero(radius: CGFloat = 32) -> some View { modifier(HeroSurface(radius: radius)) }
-    func tinted(_ tint: Color, radius: CGFloat = 24) -> some View { modifier(TintedSurface(tint: tint, radius: radius)) }
+    nonisolated func panel(radius: CGFloat = 22, fill: Double = 0.6) -> some View { modifier(PanelSurface(radius: radius, fill: fill)) }
+    nonisolated func hero(radius: CGFloat = 32) -> some View { modifier(HeroSurface(radius: radius)) }
+    nonisolated func tinted(_ tint: Color, radius: CGFloat = 24) -> some View { modifier(TintedSurface(tint: tint, radius: radius)) }
 
     /// Botão redondo de vidro (40–44pt) do cabeçalho.
-    func glassCircle(_ size: CGFloat = 40) -> some View {
+    nonisolated func glassCircle(_ size: CGFloat = 40) -> some View {
         frame(width: size, height: size)
             .contentShape(.circle)
             .glassEffect(.regular.interactive(), in: .circle)
     }
 
-    func glassPill(height: CGFloat = 40) -> some View {
+    nonisolated func glassPill(height: CGFloat = 40) -> some View {
         frame(height: height)
             .padding(.horizontal, 14)
             .contentShape(.capsule)
