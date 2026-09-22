@@ -72,7 +72,7 @@ struct OnboardingView: View {
                     .padding(.top, 4)
 
                     Button { store.startEmpty() } label: {
-                        Text("Começar 100% do zero")
+                        Text(verbatim: "Começar 100% do zero")
                             .textStyle(15.5, .semibold)
                             .foregroundStyle(.ink)
                             .frame(maxWidth: .infinity)

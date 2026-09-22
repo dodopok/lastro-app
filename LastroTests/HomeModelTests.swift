@@ -17,7 +17,7 @@ struct HomeModelTests {
         #expect(m.heroes[2].sub == "6 contas até o dia 30")
         #expect(m.shortcuts.map(\.value) == ["R$ 72,26", "R$ 6.434"])
         #expect(m.pendingCount == 8)
-        #expect(m.pending.count == 4)
+        #expect(m.pending.count == 3)
         #expect(m.categoriesRight == "R$ 20.782 de R$ 21.402")
         #expect(m.receiptsCount == 3)
         #expect(m.miudezas?.title == "R$ 523,60 em 18 gastos pequenos")

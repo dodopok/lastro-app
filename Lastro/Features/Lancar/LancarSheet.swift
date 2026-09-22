@@ -49,9 +49,11 @@ struct LancarSheet: View {
             HStack(spacing: 22) {
                 Button { dismiss(); onScan() } label: {
                     Label("Escanear cupom", systemImage: "text.viewfinder")
+                        .padding(.vertical, 8).contentShape(.rect)
                 }
                 Button { dismiss(); onReceipts() } label: {
                     Label("Recibo compartilhado", systemImage: "square.and.arrow.up")
+                        .padding(.vertical, 8).contentShape(.rect)
                 }
             }
             .textStyle(13.5, .semibold)
@@ -77,6 +79,7 @@ struct LancarSheet: View {
                 Image(systemName: "xmark").font(.system(size: 15, weight: .semibold))
                     .frame(width: 40, height: 40)
                     .background(.ink.opacity(0.06), in: .circle)
+                    .contentShape(.circle)
             }
             .accessibilityLabel("Fechar")
             Spacer()
@@ -86,6 +89,7 @@ struct LancarSheet: View {
                 Image(systemName: "text.viewfinder").font(.system(size: 17, weight: .medium))
                     .frame(width: 40, height: 40)
                     .background(.ink.opacity(0.06), in: .circle)
+                    .contentShape(.circle)
             }
             .accessibilityLabel("Escanear cupom")
         }
@@ -184,6 +188,7 @@ struct LancarSheet: View {
 private struct KeyStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .contentShape(.rect)
             .background(configuration.isPressed ? Color.ink.opacity(0.09) : .clear,
                         in: .rect(cornerRadius: 16, style: .continuous))
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)

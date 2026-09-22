@@ -147,7 +147,7 @@ struct HomeModel {
 
             let all = m.pending
             pendingCount = all.count
-            pending = all.prefix(4).map { e in
+            pending = all.prefix(3).map { e in
                 let approve = m.needsApproval(e)
                 let when = e.day > today.day ? "vence dia \(e.day)" : Ledger.dayLabel(e.day, today: today.day)
                 return PendingRow(entry: e, category: ledger.category(e.categoryId),

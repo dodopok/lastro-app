@@ -47,9 +47,9 @@ struct MainView: View {
     @Environment(AppStore.self) private var store
     @State private var tab: AppTab = .hoje
     @State private var paths: [AppTab: NavigationPath] = [:]
-    @State private var launch: LaunchDraft?
 
     var body: some View {
+        @Bindable var store = store
         ZStack(alignment: .bottom) {
             Backdrop()
 
@@ -68,13 +68,13 @@ struct MainView: View {
                 .allowsHitTesting(false)
                 .ignoresSafeArea()
 
-            BottomBar(tab: $tab) { launch = LaunchDraft() }
+            BottomBar(tab: $tab) { store.open() }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
         }
         .overlay(alignment: .top) { ToastView(toast: store.toast) }
         .overlay { ApprovalAlert() }
-        .sheet(item: $launch) { draft in
+        .sheet(item: $store.launch) { draft in
             LancarSheet(draft: draft,
                         onScan: { store.show("Escanear cupom chega na próxima fase") },
                         onReceipts: { push(.recibos) })
@@ -89,7 +89,10 @@ struct MainView: View {
     private func screen(for tab: AppTab) -> some View {
         switch tab {
         case .hoje: HojeView(perform: perform)
-        default: UpcomingScreen(title: tab.title, phase: tab.phaseNote)
+        case .gastos: GastosView()
+        case .historico: HistoricoView()
+        case .piloto: PilotoView()
+        case .mais: MaisView()
         }
     }
 
@@ -104,7 +107,9 @@ struct MainView: View {
     private func perform(_ action: HomeAction) {
         switch action {
         case .push(let route): push(route)
-        case .spending: tab = .gastos
+        case .spending(let filter):
+            store.spendingFilter = filter
+            tab = .gastos
         case .history: tab = .historico
         case .pilot: tab = .piloto
         }

@@ -107,6 +107,7 @@ struct SelectChip<Leading: View>: View {
             .foregroundStyle(selected ? selectedText : .ink)
             .background(selected ? selectedFill : .white.opacity(0.6), in: .capsule)
             .overlay { Capsule().strokeBorder(selected ? selectedStroke : .ink.opacity(0.08), lineWidth: 1) }
+            .contentShape(.capsule)
             .animation(.smooth(duration: 0.22), value: selected)
         }
         .buttonStyle(.plain)
@@ -154,6 +155,7 @@ struct PressScale: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .contentShape(.rect)
             .scaleEffect(configuration.isPressed ? scale : 1)
             .animation(.snappy(duration: 0.15), value: configuration.isPressed)
     }
@@ -165,5 +167,15 @@ struct Chevron: View {
         Image(systemName: "chevron.right")
             .font(.system(size: 13, weight: .bold))
             .foregroundStyle(.ink.opacity(0.3))
+    }
+}
+
+/// Linha de lista: realce leve ao tocar, área inteira tocável.
+struct RowPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(.rect)
+            .background(configuration.isPressed ? Color.ink.opacity(0.04) : .clear)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }

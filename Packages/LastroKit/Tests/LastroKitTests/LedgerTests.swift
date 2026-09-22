@@ -197,3 +197,41 @@ struct CurrentMonthTests {
         #expect(p.b == 0)
     }
 }
+
+@Suite struct InsightsTests {
+    let ledger = DemoData.ledger()
+
+    @Test func dividas() {
+        let d = DebtSummary(ledger, current: DemoData.current)
+        #expect(d.open == Money(cents: 6_696_000))
+        #expect(d.monthly == Money(cents: 611_000))
+        #expect(d.freeAt == YearMonth(year: 2028, month: 10))  // "Livre em outubro de 2028"
+        #expect(Int((d.shareOfIncome(ledger.income(in: DemoData.current)) * 100).rounded()) == 26)
+    }
+
+    @Test func padraoDoRango() {
+        let rango = ledger.activeCategories.first { $0.slug == "rango" }!
+        let entries = ledger.entries(in: DemoData.current).filter { $0.categoryId == rango.id }
+        let text = Insights.category(rango, entries: entries, month: DemoData.current, today: DemoData.today)
+        #expect(text.hasPrefix("12 lançamentos em 21 dias."))
+        #expect(text.contains("O maior foi iFood, R$ 49,90 no dia 17."))
+        let moradia = ledger.activeCategories.first { $0.slug == "moradia" }!
+        #expect(Insights.category(moradia, entries: [], month: DemoData.current, today: 21).hasPrefix("Categoria fixa"))
+    }
+
+    @Test func diaDaSemana() {
+        #expect(Insights.weekday(DemoData.current, day: 1) == 2)  // 1º/set/2026 é terça
+    }
+
+    @Test func cartoes() {
+        #expect(Insights.cards(ledger.activeCards).hasPrefix("Seus 6 cartões têm 4 vencimentos diferentes."))
+    }
+
+    @Test func detalheDoHistorico() {
+        let aug = MonthDetail(ledger, month: YearMonth(year: 2026, month: 8), current: DemoData.current, today: 21)
+        #expect(aug.leftover == Money(cents: -21_000))
+        #expect(aug.top.first?.category.slug == "dividas")
+        let set = MonthDetail(ledger, month: DemoData.current, current: DemoData.current, today: 21)
+        #expect(set.isForecast && set.leftover == Money(cents: 159_587))
+    }
+}

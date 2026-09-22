@@ -64,6 +64,11 @@ actor SyncEngine {
         }
     }
 
+    /// Sair da conta: esquece o cache e a fila deste aparelho.
+    func reset() async throws {
+        try await cache.reset()
+    }
+
     // MARK: leitura
 
     /// Monta o Ledger a partir do cache. `nil` se ainda não há perfil (primeiro login).

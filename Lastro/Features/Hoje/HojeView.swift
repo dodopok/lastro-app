@@ -30,6 +30,7 @@ struct HojeView: View {
             .padding(.bottom, 120)
         }
         .scrollIndicators(.hidden)
+        .screenBackground()
         .refreshable { await store.refresh() }
         .sensoryFeedback(.selection, trigger: store.heroIndex)
         .sensoryFeedback(.selection, trigger: store.selectedMonth)
@@ -318,32 +319,33 @@ struct PendingRowView: View {
     let tap: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            Button(action: tap) {
+        // A linha inteira confirma (ou pede Face ID); o círculo é só o indicador.
+        Button(action: tap) {
+            HStack(spacing: 12) {
                 Circle().strokeBorder(.ink.opacity(0.22), lineWidth: 1.8)
                     .frame(width: 26, height: 26)
-                    .contentShape(Circle().inset(by: -8))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(row.tag?.isApproval == true ? "Aprovar \(row.entry.description)" : "Confirmar \(row.entry.description)")
-
-            if let c = row.category { CategoryIcon(c) }
-            VStack(alignment: .leading, spacing: 0) {
-                Text(row.entry.description).textStyle(15, .semibold).foregroundStyle(.ink).lineLimit(1)
-                Text(row.meta).textStyle(12.5).foregroundStyle(.inkTertiary).lineLimit(1)
-            }
-            Spacer(minLength: 0)
-            VStack(alignment: .trailing, spacing: 3) {
-                Text(row.value).textStyle(15, .semibold).monospacedDigit().foregroundStyle(.ink)
-                if let tag = row.tag {
-                    Tag(text: tag.text,
-                        color: tag.isApproval ? .warning : .ink.opacity(0.45),
-                        background: tag.isApproval ? Color(Palette.amber).opacity(0.14) : .ink.opacity(0.06))
+                if let c = row.category { CategoryIcon(c) }
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(row.entry.description).textStyle(15, .semibold).foregroundStyle(.ink).lineLimit(1)
+                    Text(row.meta).textStyle(12.5).foregroundStyle(.inkTertiary).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                VStack(alignment: .trailing, spacing: 3) {
+                    Text(row.value).textStyle(15, .semibold).monospacedDigit().foregroundStyle(.ink)
+                    if let tag = row.tag {
+                        Tag(text: tag.text,
+                            color: tag.isApproval ? .warning : .ink.opacity(0.45),
+                            background: tag.isApproval ? Color(Palette.amber).opacity(0.14) : .ink.opacity(0.06))
+                    }
                 }
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .contentShape(.rect)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .buttonStyle(RowPressStyle())
+        .accessibilityLabel(row.tag?.isApproval == true ? "Aprovar \(row.entry.description)" : "Confirmar \(row.entry.description)")
+        .accessibilityValue(row.value)
     }
 }
 

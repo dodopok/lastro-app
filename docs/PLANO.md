@@ -119,16 +119,17 @@ implementar `send()` e mudar `PAYMENT_PROVIDER`.
 - [x] CI (Postgres + Deno no Linux; LastroKit + app no macOS 26)
 
 **Fase 2: o dia a dia**
-- [ ] Gastos (lista por dia, busca, filtros)
-- [ ] Detalhe de categoria (anel, padrão, ticket médio)
-- [ ] Cartões (carrossel, fatura, limite)
-- [ ] Histórico (barras de sobra, acumulado, maiores categorias)
-- [ ] Planejar (passo de R$ 50, itens só do mês)
-- [ ] Contas fixas: lista, criar, editar e apagar
-- [ ] Recibos + **extensão de compartilhar** (App Group com o cache)
+- [x] Gastos (lista por dia, busca, filtros; toque confirma)
+- [x] Detalhe de categoria (anel, padrão calculado dos dados, ticket médio)
+- [x] Cartões (carrossel, fatura, limite, compras)
+- [x] Histórico (barras de sobra, acumulado, maiores categorias)
+- [x] Planejar (passo de R$ 50, itens só do mês)
+- [x] Contas fixas: lista, criar, editar e apagar
+- [x] Piloto (toggles, trava, status) · Dívidas · Metas · Mais · Ajustes (exportar CSV)
+- [x] Recibos: confirmar e editar
+- [ ] **Extensão de compartilhar** (App Group com o cache)
 - [ ] **Escanear cupom** (VisionKit `DataScannerViewController` + extração do total)
 - [ ] Importador de planilha (CSV/XLSX → fixas e categorias)
-- [ ] Insights de "Padrão" gerados pelo servidor
 
 **Fase 3: piloto de verdade**
 - [ ] Tela Piloto (toggles, trava, status vindos de `payments`)
