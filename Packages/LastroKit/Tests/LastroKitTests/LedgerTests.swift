@@ -117,19 +117,27 @@ struct CurrentMonthTests {
 
     @Test func regras() {
         var a = AmountInput()
-        #expect(a.press(.comma))
+        let firstComma = a.press(.comma)
+        #expect(firstComma)
         #expect(a.raw == "0,")
-        #expect(!a.press(.comma))
+        let secondComma = a.press(.comma)
+        #expect(!secondComma)
         a.press(.digit(9)); a.press(.digit(9))
-        #expect(!a.press(.digit(1)))  // só 2 decimais
+        let thirdDecimal = a.press(.digit(1))
+        #expect(!thirdDecimal)  // só 2 decimais
+
         var b = AmountInput()
         for _ in 0..<7 { b.press(.digit(9)) }
-        #expect(!b.press(.digit(9)))  // até 7 dígitos
+        let eighthDigit = b.press(.digit(9))
+        #expect(!eighthDigit)  // até 7 dígitos
+
         var z = AmountInput()
         z.press(.digit(0)); z.press(.digit(5))
         #expect(z.raw == "5")  // zero à esquerda some
         z.press(.delete); z.press(.delete)
-        #expect(z.isEmpty && !z.press(.delete))
+        let deletedOnEmpty = z.press(.delete)
+        #expect(z.isEmpty)
+        #expect(!deletedOnEmpty)
     }
 
     @Test func aPartirDeValor() {
