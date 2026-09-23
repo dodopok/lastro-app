@@ -8,6 +8,8 @@ struct BancosView: View {
     @State private var connect: ConnectSession?
     @State private var loadingToken = false
     @State private var toRemove: BankConnection?
+    @State private var adopting = false
+    @State private var itemId = ""
 
     struct ConnectSession: Identifiable {
         let id = UUID()
@@ -50,6 +52,12 @@ struct BancosView: View {
                 open(itemId: nil)
             }
 
+            Button("Já conectei no painel da Pluggy") { itemId = ""; adopting = true }
+                .textStyle(14, .semibold).foregroundStyle(.ink.opacity(0.6))
+                .frame(maxWidth: .infinity).frame(height: 40).contentShape(.rect)
+                .buttonStyle(.plain)
+                .disabled(store.isDemo || store.isSyncingBanks)
+
             Text("A Pluggy é autorizada pelo Banco Central. O Lastro só lê: nunca vê sua senha nem move dinheiro por aqui.")
                 .textStyle(12.5).foregroundStyle(.ink.opacity(0.45))
                 .frame(maxWidth: .infinity).multilineTextAlignment(.center).padding(.horizontal, 12)
@@ -70,6 +78,18 @@ struct BancosView: View {
             }
         } message: {
             Text("Os lançamentos que já vieram ficam. Novos gastos desse banco param de chegar.")
+        }
+        .alert("Usar conexão da Pluggy", isPresented: $adopting) {
+            TextField("ID do item", text: $itemId)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            Button("Cancelar", role: .cancel) {}
+            Button("Conectar") {
+                let id = itemId.trimmingCharacters(in: .whitespacesAndNewlines)
+                Task { await store.connectBank(itemId: id) }
+            }
+        } message: {
+            Text("No painel da Pluggy, abra o item da conexão e copie o ID dele. O Lastro passa a receber os gastos desse banco.")
         }
         .task { if !store.isDemo { await store.refresh() } }
     }

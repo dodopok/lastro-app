@@ -1,12 +1,20 @@
 // Open Finance (Pluggy), chamado pelo app com o JWT do usuário.
 //
 // POST   /pluggy/token             { itemId? }  → { connectToken, sandbox }   (itemId = reconectar)
-// POST   /pluggy/items             { itemId }   → resumo da 1ª sincronização (depois do widget)
+// POST   /pluggy/items             { itemId }   → resumo da 1ª sincronização (depois do widget,
+//                                                  ou adotando um item criado no painel da Pluggy)
 // POST   /pluggy/sync                           → pede atualização ao banco e sincroniza o mês
 // DELETE /pluggy/items/{connectionId}           → desconecta (apaga o item na Pluggy)
 import { userFrom } from "../_shared/auth.ts";
 import { adminClient, json } from "../_shared/payments.ts";
 import { currentMonthStart, pluggyClient, syncItem } from "../_shared/pluggy.ts";
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function webhookUrl(): string | undefined {
+  const secret = Deno.env.get("PLUGGY_WEBHOOK_SECRET");
+  return secret ? `${Deno.env.get("SUPABASE_URL")}/functions/v1/pluggy-webhook?secret=${encodeURIComponent(secret)}` : undefined;
+}
 
 Deno.serve(async (req) => {
   const user = await userFrom(req);
@@ -21,24 +29,32 @@ Deno.serve(async (req) => {
 
     if (route === "POST token") {
       const body = await req.json().catch(() => ({}));
-      const secret = Deno.env.get("PLUGGY_WEBHOOK_SECRET");
-      const webhookUrl = secret
-        ? `${Deno.env.get("SUPABASE_URL")}/functions/v1/pluggy-webhook?secret=${encodeURIComponent(secret)}`
-        : undefined;
       const { accessToken } = await pluggy.createConnectToken(body.itemId || undefined, {
         clientUserId: user,
-        webhookUrl,
+        webhookUrl: webhookUrl(),
         avoidDuplicates: true,
       });
       return json({ connectToken: accessToken, sandbox: Deno.env.get("PLUGGY_SANDBOX") === "true" });
     }
 
     if (route === "POST items") {
-      const { itemId } = await req.json();
-      if (typeof itemId !== "string") return json({ erro: "itemId obrigatório" }, 422);
-      // O connect token amarra o item ao usuário: não aceita item de outra pessoa.
-      const item = await pluggy.fetchItem(itemId);
-      if (item.clientUserId !== user) return json({ erro: "item não pertence a este usuário" }, 403);
+      const { itemId: raw } = await req.json();
+      const itemId = typeof raw === "string" ? raw.trim() : "";
+      if (!UUID.test(itemId)) return json({ erro: "Esse não parece um ID de item da Pluggy" }, 422);
+      const item = await pluggy.fetchItem(itemId).catch(() => null);
+      if (!item) return json({ erro: "Item não encontrado na Pluggy (confira o ID e as credenciais)" }, 404);
+      // Pelo widget, o connect token amarra o item ao usuário. Item criado no painel
+      // da Pluggy vem sem dono: pode ser adotado, desde que ninguém mais o tenha.
+      if (item.clientUserId && item.clientUserId !== user) return json({ erro: "Esse item pertence a outra pessoa" }, 403);
+      if (!item.clientUserId) {
+        const { data: taken, error } = await db.from("bank_connections").select("user_id")
+          .eq("pluggy_item_id", itemId).neq("user_id", user).maybeSingle();
+        if (error) throw error;
+        if (taken) return json({ erro: "Esse item pertence a outra pessoa" }, 403);
+        // Marca o dono e liga o webhook, pra os próximos gastos chegarem sozinhos.
+        await pluggy.updateItem(itemId, undefined, { clientUserId: user, webhookUrl: webhookUrl() })
+          .catch((e) => console.warn("adotar item", e));
+      }
       const summary = await syncItem(db, pluggy, user, itemId, { dateFrom: await currentMonthStart(db, user) });
       return json(summary, 201);
     }

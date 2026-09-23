@@ -81,3 +81,11 @@ final class SupabaseRemote: Remote {
         try await client.auth.signOut()
     }
 }
+
+/// A mensagem `{ "erro": … }` que as edge functions mandam junto com o status de erro.
+func serverMessage(_ error: any Error) -> String? {
+    guard case let FunctionsError.httpError(_, data) = error,
+          let body = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+    else { return nil }
+    return body["erro"] as? String
+}

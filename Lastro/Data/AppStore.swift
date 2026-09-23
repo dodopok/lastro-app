@@ -466,7 +466,7 @@ final class AppStore {
             await refresh()
             show("Banco conectado · \(summary.message)")
         } catch {
-            show("Não deu para conectar o banco")
+            show(serverMessage(error) ?? "Não deu para conectar o banco")
         }
     }
 

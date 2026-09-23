@@ -89,5 +89,10 @@ precisa configurar nada no painel da Pluggy. No app: Ajustes → Bancos conectad
 Conectar banco. Com `PLUGGY_SANDBOX=true`, use o conector "Pluggy Bank" (usuário
 `user-ok`, senha `password-ok`) para testar sem banco de verdade.
 
+Se você já conectou o banco pelo **painel da Pluggy**, não precisa conectar de
+novo: em Bancos, toque em "Já conectei no painel da Pluggy" e cole o ID do item.
+O servidor só adota item sem dono (ou que já é seu). Ele grava você como dono,
+liga o webhook e importa o mês corrente.
+
 Para ligar o login com Apple no projeto Supabase, vá em Authentication → Providers →
 Apple e use o bundle id `app.lastro.ios`.
